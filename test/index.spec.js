@@ -1,0 +1,111 @@
+import { process } from '../src/index';
+import marked from 'marked'
+import yaml from 'js-yaml'
+import { expect } from 'chai'
+import { fixture } from './test-utils'
+
+const CodeMirror = require('codemirror/lib/codemirror');
+require('codemirror/addon/runmode/runmode.js');
+
+describe('process', function() {
+
+  const basicExample = process(marked, fixture('basic'));
+  const languageBasicExample = process(marked, fixture('basic'), {language: 'ruby'});
+  const unfilteredExample = process(marked, fixture('basic'), {filterLanguages: false});
+
+  describe('Basic', function() {
+    it ('should return a valid object', function() {
+      expect(basicExample).to.be.an('object')
+        .and.to.have.all.keys('raw', 'icons', 'languages', 'language', 'originalLanguage', 'extensions',
+          'renderer', 'tabs', 'headers', 'preprocessed', 'html', 'render', 'afterRender');
+    });
+
+    it ('should count h1s', function() {
+      expect(basicExample.headers.h1.length).to.equal(1);
+    });
+  });
+
+  describe ('language filtering', function() {
+    it ('should filter by first language if non is set', function() {
+      expect(basicExample.html).to.include('javascript').and.not.to.include('ruby');
+    });
+
+    describe ('if/not blocks', function() {
+      it ('should filter language automatically by first if none is provided', function() {
+        const example = process(marked, fixture('if-not'));
+        expect(example.html).to.include('<strong>Javascript!</strong>').and.not.to.include('Other!');
+      });
+
+      it ('should filter languages separated by a comma', function() {
+        const example = process(marked, fixture('if-not'), { language: 'csharp' });
+        expect(example.html).to.include('<strong>Other!</strong>').and.not.to.include('Javascript!');
+      });
+    });
+  });
+
+
+  describe ('YAML/Meta', function() {
+    const metaExample = process(marked, fixture('meta'), {jsYaml: yaml});
+
+    it ('should extract meta data', function() {
+      expect(metaExample.meta.options.theme).to.equal('test');
+    });
+  });
+
+  describe ('CodeMirror', function() {
+    const cmBasicExample = process(marked, fixture('basic'), {cm: CodeMirror});
+    const cmNumberedExample = process(marked, fixture('numbered'), {cm: CodeMirror});
+    // const cmNoNumberedExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbers: false});
+    // const cmNumberedNoGutterExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbersGutter: true});
+
+    it ('should return a valid object', function() {
+      expect(cmBasicExample).to.be.an('object');
+    });
+
+    it ('should include theme within content', function() {
+      expect(cmBasicExample.html).to.include('neo');
+    });
+
+    // CM is not behaving within mocha/jsdom so we are skipping for now
+    it.skip ('should include highlighted cm spans', function() {
+      expect(cmBasicExample.html).to.include('cm-variable');
+    });
+
+    describe('gutters', function() {
+      it ('should include gutters when line numbers are included', function() {
+        expect(cmNumberedExample.html).to.include('cm-runmode-linenumbers-gutter');
+      });
+    });
+  });
+
+  describe ('Docs', function() {
+
+    it ('should process javascript', function() {
+      let example = process(marked, fixture('doc'), {language: 'javascript'});;
+      expect(example.html).to.include('<dfn class="doc-type">Number</dfn>')
+        .and.to.include('Array (of Strings)')
+        .and.to.include('firstNames')
+        .and.to.not.include('Challenge.')
+        .and.to.not.include('first_names');
+    });
+
+    it ('should process ruby', function() {
+      let example = process(marked, fixture('doc'), {language: 'ruby'});;
+      expect(example.html).to.include('<dfn class="doc-type">Integer</dfn>')
+        .and.to.include('Array (of Strings)')
+        .and.to.include('first_names')
+        .and.to.not.include('Challenge.')
+        .and.to.not.include('firstNames');
+    });
+
+    it ('should process csharp', function() {
+      let example = process(marked, fixture('doc'), {language: 'csharp'});;
+      expect(example.html).to.include('<dfn class="doc-type">int</dfn>')
+        .and.to.include('string[]')
+        .and.to.include('TestFoo')
+        .and.to.include('firstNames')
+        .and.to.include('Challenge.')
+        .and.to.not.include('first_names');
+    });
+  });
+});
