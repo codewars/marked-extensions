@@ -14,10 +14,10 @@ export const STYLES = {
   }
 }
 
-export function replaceDocNames (language, content) {
+export function replaceDocNames (language, pre, content) {
 
   return content.replace(/`?@@doc(Name|Method|Const|Prop|Class|Param): ?([a-zA-Z0-9?_]*)`?/g, function (shell, type, value) {
-    return wrap(shell, type, () => {
+    return wrap(shell, type, pre, () => {
       const style = findStyle(type, language);
 
       switch (style) {
@@ -56,9 +56,9 @@ function findStyle(type, language) {
   return style;
 }
 
-function wrap (shell, type, value) {
+function wrap (shell, type, pre, value) {
   value = value();
-  if (shell.indexOf('`') === 0) {
+  if (shell.indexOf('`') === 0 || pre) {
     return shell.replace(/@@docName: ?([a-zA-Z0-9?_]*)/, value);
   }
   else {

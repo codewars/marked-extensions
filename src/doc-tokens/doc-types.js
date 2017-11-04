@@ -81,7 +81,7 @@ const NULLABLE = {
   }
 }
 
-export function replaceDocTypes (language, content) {
+export function replaceDocTypes (language, pre, content) {
   return content.replace(/`?@@docType: ?([a-zA-Z_?]*(<.*,? ?.*>)?)`?/g, function (shell, value) {
     const nullable = !!value.match(/\?$/);
     value = value.replace('?', '').trim();
@@ -98,7 +98,7 @@ export function replaceDocTypes (language, content) {
       value = mapNullable(language, value);
     }
 
-    return wrap(value, shell, nullable);
+    return wrap(value, shell, pre);
   })
 }
 
@@ -174,8 +174,8 @@ function collectionGeneric (language, type, nestedTypes) {
  * @param shell the shell of the @@docType syntax. Used to determine if a ` is present
  * @returns {string}
  */
-function wrap (value, shell) {
-  if (shell.indexOf('`') === 0) {
+function wrap (value, shell, pre) {
+  if (shell.indexOf('`') === 0 || pre) {
     return shell.replace(/@@docType: ?([a-zA-Z_?]*(<.*,? ?.*>)?)/, value);
   }
   else {

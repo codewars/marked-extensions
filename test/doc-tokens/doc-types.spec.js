@@ -13,7 +13,7 @@ function content(value) {
 
 function check(language, expected) {
   it (`${language}: ${expected}`, function() {
-    const actual = replaceDocTypes(language, content());
+    const actual = replaceDocTypes(language, false, content());
     expect(actual).to.include(`<dfn class="doc-type">${escapeHtml(expected)}</dfn>`);
   });
 }

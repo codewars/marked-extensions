@@ -1,4 +1,5 @@
 import { assignMissing } from './objects'
+import { processDocTokens } from './doc-tokens'
 
 export function buildRenderer(marked, options, result) {
   const renderer = result.renderer = new marked.Renderer();
@@ -51,13 +52,24 @@ function setupHeader(renderer, options, result) {
 function setupCode(options, result) {
   const _code = result.renderer.code;
 
+  // special version of render that will process doc tokens. Needed at times when
+  // tokens are nested inside of pre and should be rendered without tags (but their labels should still be processed)
+  const render = (code, preTokens) => {
+    if (preTokens && options.docTokens) {
+      code = processDocTokens(result, code, true);
+    }
+
+    return result.render(code);
+  }
+
+
   result.renderer.code = function(code, language) {
     if (language) {
       if (language.match(/^if:/)) {
-        return matchIfBlockLanguage(result, language) ? result.render(code) : '';
+        return matchIfBlockLanguage(result, language) ? render(code) : '';
       }
       else if (language.match(/^if-not:/)) {
-        return matchIfBlockLanguage(result, language) ? '' : result.render(code);
+        return matchIfBlockLanguage(result, language) ? '' : render(code);
       }
       else if (language.match(/^tab:/)) {
         return handleTab(result, code, language);
@@ -66,7 +78,7 @@ function setupCode(options, result) {
         return handleExtension(options, result, code, language);
       }
       else if (language === '%definitions' || language === '%doc') {
-        return wrapInBlockDiv(language, renderDefinitions(result, code));
+        return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       }
       else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
@@ -167,18 +179,19 @@ function handleExtension(options, result, code, language) {
  * @param code
  * @returns {string}
  */
-function renderDefinitions (result, code) {
+function renderDefinitions (result, code, render) {
   var html = '<dl>';
   if (code) {
     code.split('\n').forEach(line => {
       if (line.match(/^#/)) {
-        html += result.render(line);
+        html += render(line);
       }
-      else if (line.trim().match(/:$/)) {
+      else if (line.match(/: *$/)) {
         html += `<dt>${line.replace(/:$/, '')}</dt>`;
       }
       else {
-        html += `<dd>${result.render(line)}</dd>`;
+        // if line starts with 4 white spaces, a tab or a ` block, then consider it a pre tag and don't render dfn
+        html += `<dd>${render(line, !!line.match(/^(\t|\s{4}|`)/))}</dd>`;
       }
     });
   }

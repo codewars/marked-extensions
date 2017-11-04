@@ -1,8 +1,6 @@
 import { assignMissing } from './objects'
 import { buildRenderer } from './renderer'
-import { replaceDocTypes } from './doc-tokens/doc-types'
-import { replaceDocNames } from './doc-tokens/doc-names'
-import { replaceDocGlobals } from './doc-tokens/doc-globals'
+import { processDocTokens } from './doc-tokens'
 
 export const defaultOptions = {
   // these are the options passed to marked directly
@@ -116,12 +114,8 @@ export function process(marked, markdown, options = {}) {
 
   buildRenderer(marked, options, result);
 
-  if (options.docTokens) {
-    processDocTokens(result);
-  }
-
   var html = null;
-  result.html = () => html || (html = result.render(result.preprocessed));
+  result.html = () => html || (html = render(options, result));
   result.afterRender = afterRenderFn(options, result);
 
   // convert objects which have been acting as basic sets to an array
@@ -134,6 +128,18 @@ export function process(marked, markdown, options = {}) {
 
   return result;
 }
+
+function render(options, result) {
+  let html = result.render(result.preprocessed);
+
+  if (options.docTokens) {
+    html = processDocTokens(result, html);
+  }
+
+  return html;
+}
+
+
 
 /**
  * Creates the afterRender function that is added to the result, which can be called once the
@@ -200,26 +206,6 @@ function processMeta(options, result) {
 
     return '';
   });
-}
-
-/**
- * Preprocesses the markdown before sending it through marked. This is used to process
- * doc tokens and any other future extensions that we support that don't require being handled
- * during the marked rendering.
- * @param result
- */
-function processDocTokens(result) {
-  const language = result.originalLanguage || result.language;
-  result.preprocessed = replaceDocNames(
-    language,
-    replaceDocTypes(
-      language,
-      replaceDocGlobals(
-        language,
-        result.preprocessed
-      )
-    )
-  );
 }
 
 /**

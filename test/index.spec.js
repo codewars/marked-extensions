@@ -95,7 +95,7 @@ describe('process', function() {
   describe ('Docs', function() {
 
     it ('should process javascript', function() {
-      let example = process(marked, fixture('doc'), {language: 'javascript'});;
+      let example = process(marked, fixture('doc'), {language: 'javascript'});
       expect(example.html()).to.include('<dfn class="doc-type">Number</dfn>')
         .and.to.include('Array (of Strings)')
         .and.to.include('firstNames')
@@ -104,7 +104,7 @@ describe('process', function() {
     });
 
     it ('should process ruby', function() {
-      let example = process(marked, fixture('doc'), {language: 'ruby'});;
+      let example = process(marked, fixture('doc'), {language: 'ruby'});
       expect(example.html()).to.include('<dfn class="doc-type">Integer</dfn>')
         .and.to.include('Array (of Strings)')
         .and.to.include('first_names')
@@ -113,13 +113,21 @@ describe('process', function() {
     });
 
     it ('should process csharp', function() {
-      let example = process(marked, fixture('doc'), {language: 'csharp'});;
+      let example = process(marked, fixture('doc'), {language: 'csharp'});
       expect(example.html()).to.include('<dfn class="doc-type">int</dfn>')
         .and.to.include('string[]')
         .and.to.include('TestFoo')
         .and.to.include('firstNames')
         .and.to.include('Challenge.')
         .and.to.not.include('first_names');
+    });
+
+    it ('should not render doc type tags within pre > code elements', function() {
+      let example = process(marked, fixture('doc-constraints'), {language: 'javascript'});
+      expect(example.html())
+        .to.include('<code>')
+        .to.not.include('<dfn')
+        .to.not.include('&lt;dfn');
     });
   });
 });
