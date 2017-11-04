@@ -105,7 +105,7 @@ function setupCode(options, result) {
       }
     }
 
-    return _code.call(result.renderer, code, language);
+    return wrapLanguage(options, _code.call(result.renderer, code, language), language);
   }
 }
 
@@ -125,13 +125,28 @@ function lineNumbers(options, code, language) {
   return code;
 }
 
+function wrapLanguage(options, code, language) {
+  // if we have reached this point then CM isn't enabled and we need to
+  if (language && options.languageWrapper) {
+    if (typeof options.languageWrapper === 'function') {
+      code = options.languageWrapper(code, language);
+    }
+    else {
+      code = options.languageWrapper.replace('{slot}', code);
+    }
+  }
+
+  return code;
+}
+
 function highlightCM(options, code, language, raw) {
   let lineNumber = options.lineNumbers ? getLineNumber(raw) : null;
   const el = window.document.createElement('div');
   options.cm.runMode(code, options.findMode(language), el);
 
   const lnHtml = lineNumber > 0 ? `<div class="${options.lineNumbersGutter}"></div>` : '';
-  return `<pre class="cm-runmode cm-s-${options.theme}"><code>${lnHtml}${el.innerHTML}</code></pre>`;
+  const result = `<pre class="cm-runmode cm-s-${options.theme}"><code>${lnHtml}${el.innerHTML}</code></pre>`;
+  return wrapLanguage(options, result, language);
 }
 
 function getLineNumber(language) {

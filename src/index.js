@@ -29,7 +29,8 @@ export const defaultOptions = {
   // you can set icons within headers using icon::ICONNAME, this setting determines the icon class prefix used
   iconClassPrefix: 'icon-',
 
-  // set to a value that should wrap standard languages. Use "{slot}" to indicate where the code should be inserted: i.e. '<div class="tab">{code}</div>'. Can also be a function which takes (language, languages) as its parameters.
+  // set to a value that should wrap standard languages. Use "{slot}" to indicate where the code should be inserted: i.e.
+  // '<div class="tab">{code}</div>'. Can also be a function which takes (code, language) as its parameters.
   languageWrapper: null,
 
   // the language that should be used for filtering out all other languages

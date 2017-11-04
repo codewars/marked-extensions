@@ -177,4 +177,11 @@ describe('process', function() {
       expect(loaded[0]).to.contain('mermaid');
     });
   });
+
+  describe ('languageWrapper', function() {
+    it ('should wrap when using a function', function() {
+      let example = process(marked, fixture('basic'), {languageWrapper: (code, l) => `<test class="${l}">${code}</test>`});
+      expect(example.html()).to.include('<test class="javascript"><pre><code');
+    });
+  });
 });
