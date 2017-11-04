@@ -1,0 +1,20 @@
+{
+  "name": "marked-extensions",
+  "description": "A set of extensions on top of the marked markdown package",
+  "main": "dist/marked-extensions.js",
+  "authors": [
+    "Jake Hoffner"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "markdown"
+  ],
+  "homepage": "https://github.com/Codewars/marked-extensions",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
