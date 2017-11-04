@@ -18,20 +18,26 @@ export function replaceDocNames (language, pre, content) {
 
   return content.replace(/`?@@doc(Name|Method|Const|Prop|Class|Param): ?([a-zA-Z0-9?_]*)`?/g, function (shell, type, value) {
     return wrap(shell, type, pre, () => {
-      const style = findStyle(type, language);
+      if (value) {
+        const style = findStyle(type, language);
 
-      switch (style) {
-        case 'upper':
-          return value.toUpperCase();
+        switch (style) {
+          case 'upper':
+            return value.toUpperCase();
 
-        case 'camel':
-          return camelCase(value);
+          case 'camel':
+            return camelCase(value);
 
-        case 'pascal':
-          return camelCase(value, true);
+          case 'pascal':
+            return camelCase(value, true);
 
-        default:
-          return value;
+          default:
+            return value;
+        }
+      }
+      else {
+        console.warn('replaceDocNames value is missing:', content);
+        return '';
       }
     })
   })

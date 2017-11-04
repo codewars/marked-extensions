@@ -129,5 +129,29 @@ describe('process', function() {
         .to.not.include('<dfn')
         .to.not.include('&lt;dfn');
     });
+
+    // test a specific bug that was found
+    it ('should handle doc types within ``', function() {
+      let example = process(marked, "`@@docType:Array`", {language: 'javascript'});
+      expect(example.html())
+        .to.include('Array')
+        .to.not.include('of /codes');
+    });
+
+    // test a specific bug that was found
+    it ('should handle Array doc types within ``', function() {
+      let example = process(marked, "`@@docType:Array<String>`", {language: 'javascript'});
+      expect(example.html())
+        .to.include('Array (of Strings)')
+        .to.not.include('of /codes');
+    });
+
+    // test a specific bug that was found
+    it ('should handle doc types without ``', function() {
+      let example = process(marked, "@@docType:Array<String>", {language: 'javascript'});
+      expect(example.html())
+        .to.include('Array (of Strings)')
+        .to.not.include('of /codes');
+    });
   });
 });

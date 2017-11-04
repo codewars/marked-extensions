@@ -15,3 +15,7 @@ export function lowerCaseFirst (str) {
 export function escapeHtml (text) {
   return text ? text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : text;
 }
+
+export function unescapeHtml (text) {
+  return text ? text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>') : text;
+}

@@ -1,4 +1,4 @@
-import { escapeHtml } from '../strings'
+import { escapeHtml, unescapeHtml } from '../strings'
 
 /**
  * Tracks some basic types that we convert for different languages. We don't need to try to
@@ -81,8 +81,32 @@ const NULLABLE = {
   }
 }
 
+/**
+ * Long story short this handles these types of cases
+ * <code>@@docType:Array</code>
+ * <code>@@docType:Array<String></code>
+ * `@@docType:Array`
+ * `@@docType:Array<String>`
+ * `@@docType:Array<String, Int>`
+ * `@@docType:Array<String,Int>`
+ * @@docType:Array<String, Int>
+ * @@docType:Array
+ * @type {RegExp}
+ */
+const regex = /(`|<code>)?@@docType: ?([a-zA-Z_?]*(?:<[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?>)?)(`|<\/code>?)?/g;
+
+/**
+ * process all @@docType: tokens and replaces them with the correct display value, and possibly wraps them in a dfn tag
+ * @param language
+ * @param pre Boolean that determines if we are displaying this content within a pre element, so don't wrap with dfn tags
+ * @param content The content to be replaced. Can handle replacing multiple tags at once
+ */
 export function replaceDocTypes (language, pre, content) {
-  return content.replace(/`?@@docType: ?([a-zA-Z_?]*(<.*,? ?.*>)?)`?/g, function (shell, value) {
+  // unescape HTML to make it easier to process
+  content = unescapeHtml(content);
+
+  return content.replace(regex, function (shell, codeEl, value) {
+
     const nullable = !!value.match(/\?$/);
     value = value.replace('?', '').trim();
 
@@ -98,7 +122,7 @@ export function replaceDocTypes (language, pre, content) {
       value = mapNullable(language, value);
     }
 
-    return wrap(value, shell, pre);
+    return wrap(value, shell, pre || !!codeEl);
   })
 }
 
@@ -175,8 +199,8 @@ function collectionGeneric (language, type, nestedTypes) {
  * @returns {string}
  */
 function wrap (value, shell, pre) {
-  if (shell.indexOf('`') === 0 || pre) {
-    return shell.replace(/@@docType: ?([a-zA-Z_?]*(<.*,? ?.*>)?)/, value);
+  if (pre) {
+    return escapeHtml(value);
   }
   else {
     return `<dfn class="doc-type">${escapeHtml(value.trim())}</dfn>`;
