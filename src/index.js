@@ -61,9 +61,17 @@ export const defaultOptions = {
   // Note: make sure to import codemirror/addon/runmode/runmode.js first.
   cm: null,
 
+  // set to automatically load a CM language. This is provided by default but you can override if you wish
+  // to override. This option is only used if both cm and loadScript are set.
+  // You can set this to null if you do not wish or need to load languages dynamically
+  loadCMLanguage: (language, options) => {
+    return options.loadScript(`//cdnjs.cloudflare.com/ajax/libs/codemirror/${options.cm.version}/mode/${language}/${language}.min.js`);
+  },
+
   // If you wish to support loading external extension scripts, you should set this to a
-  // function that takes a url and returns a promise.
-  loadScript: true,
+  // function that takes a url and returns a promise. Note that this function will need to be responsible
+  // for not reloading the same scripts if requested more than once, this library does not take care of caching.
+  loadScript: null,
 
   // if set to a function, will be called back after all external scripts have loaded
   loadCallback: null
@@ -112,7 +120,9 @@ export function process(marked, markdown, options = {}) {
     processDocTokens(result);
   }
 
-  result.html = result.render(result.preprocessed);
+  var html = null;
+  result.html = () => html || (html = result.render(result.preprocessed));
+  result.afterRender = afterRenderFn(options, result);
 
   // convert objects which have been acting as basic sets to an array
   ['languages', 'extensions', 'icons']
@@ -121,8 +131,6 @@ export function process(marked, markdown, options = {}) {
   if (options.loadScript) {
     processExternalScripts(options, result);
   }
-
-  result.afterRender = afterRenderFn(options, result);
 
   return result;
 }
@@ -145,6 +153,11 @@ function afterRenderFn(options, result) {
   }
 }
 
+/**
+ * Will loop through extensions and languages and try to dynamically load scripts.
+ * @param options
+ * @param result
+ */
 function processExternalScripts(options, result) {
   const promises = [];
   result.extensions.forEach(ext => {
@@ -154,6 +167,20 @@ function processExternalScripts(options, result) {
     }
   });
 
+  // automatically load the CM language that is shown
+  if (options.cm && options.loadCMLanguage) {
+    // if we filter languages then we only need to load the one being shown
+    if (options.filterLanguages && result.language) {
+      promises.push(options.loadCMLanguage(result.language, options));
+    }
+    // otherwise we need to load them all
+    else if (!options.filterLanguages && result.languages.length) {
+      result.languages.forEach(language => {
+        promises.push(options.loadCMLanguage(language, options));
+      });
+    }
+  }
+
   Promise.all(promises).then(() => {
     if (options.loadCallback) {
       options.loadCallback(result);
@@ -161,7 +188,11 @@ function processExternalScripts(options, result) {
   });
 }
 
-
+/**
+ * Processes yaml content at the top of the markdown, marked starting by a --- and ending with a ...
+ * @param options
+ * @param result
+ */
 function processMeta(options, result) {
   result.preprocessed = result.preprocessed.replace(/^---\n(.*\n)*\.\.\. *\n\n?/, meta => {
     const yaml = meta.replace(/^---\n/, '').replace(/\n\.\.\. *\n?/, '');

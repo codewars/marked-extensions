@@ -21,24 +21,25 @@ describe('process', function() {
     });
 
     it ('should count h1s', function() {
+      basicExample.html()
       expect(basicExample.headers.h1.length).to.equal(1);
     });
   });
 
   describe ('language filtering', function() {
     it ('should filter by first language if non is set', function() {
-      expect(basicExample.html).to.include('javascript').and.not.to.include('ruby');
+      expect(basicExample.html()).to.include('javascript').and.not.to.include('ruby');
     });
 
     describe ('if/not blocks', function() {
       it ('should filter language automatically by first if none is provided', function() {
         const example = process(marked, fixture('if-not'));
-        expect(example.html).to.include('<strong>Javascript!</strong>').and.not.to.include('Other!');
+        expect(example.html()).to.include('<strong>Javascript!</strong>').and.not.to.include('Other!');
       });
 
       it ('should filter languages separated by a comma', function() {
         const example = process(marked, fixture('if-not'), { language: 'csharp' });
-        expect(example.html).to.include('<strong>Other!</strong>').and.not.to.include('Javascript!');
+        expect(example.html()).to.include('<strong>Other!</strong>').and.not.to.include('Javascript!');
       });
     });
   });
@@ -63,18 +64,31 @@ describe('process', function() {
     });
 
     it ('should include theme within content', function() {
-      expect(cmBasicExample.html).to.include('neo');
+      expect(cmBasicExample.html()).to.include('neo');
     });
 
     // CM is not behaving within mocha/jsdom so we are skipping for now
     it.skip ('should include highlighted cm spans', function() {
-      expect(cmBasicExample.html).to.include('cm-variable');
+      expect(cmBasicExample.html()).to.include('cm-variable');
     });
 
     describe('gutters', function() {
       it ('should include gutters when line numbers are included', function() {
-        expect(cmNumberedExample.html).to.include('cm-runmode-linenumbers-gutter');
+        expect(cmNumberedExample.html()).to.include('cm-runmode-linenumbers-gutter');
       });
+    });
+
+    it ('should load language files', function() {
+      const loaded = [];
+      const load = url => {
+        loaded.push(url);
+        return Promise.resolve();
+      };
+
+      const example = process(marked, fixture('basic'), {cm: CodeMirror, loadScript: load});
+
+      expect(loaded.length).to.equal(1);
+      expect(loaded[0]).to.contain('mode/javascript/javascript.min.js');
     });
   });
 
@@ -82,7 +96,7 @@ describe('process', function() {
 
     it ('should process javascript', function() {
       let example = process(marked, fixture('doc'), {language: 'javascript'});;
-      expect(example.html).to.include('<dfn class="doc-type">Number</dfn>')
+      expect(example.html()).to.include('<dfn class="doc-type">Number</dfn>')
         .and.to.include('Array (of Strings)')
         .and.to.include('firstNames')
         .and.to.not.include('Challenge.')
@@ -91,7 +105,7 @@ describe('process', function() {
 
     it ('should process ruby', function() {
       let example = process(marked, fixture('doc'), {language: 'ruby'});;
-      expect(example.html).to.include('<dfn class="doc-type">Integer</dfn>')
+      expect(example.html()).to.include('<dfn class="doc-type">Integer</dfn>')
         .and.to.include('Array (of Strings)')
         .and.to.include('first_names')
         .and.to.not.include('Challenge.')
@@ -100,7 +114,7 @@ describe('process', function() {
 
     it ('should process csharp', function() {
       let example = process(marked, fixture('doc'), {language: 'csharp'});;
-      expect(example.html).to.include('<dfn class="doc-type">int</dfn>')
+      expect(example.html()).to.include('<dfn class="doc-type">int</dfn>')
         .and.to.include('string[]')
         .and.to.include('TestFoo')
         .and.to.include('firstNames')

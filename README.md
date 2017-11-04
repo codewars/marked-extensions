@@ -8,6 +8,7 @@ Provides markdown extensions on top of the marked library, including:
 - Code line numbers
 - CodeMirror runMode integration
 - Mermaid integration
+- YAML meta data
 
 ## Install
 ```
