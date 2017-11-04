@@ -1,6 +1,6 @@
 {
   "name": "marked-extensions",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "dist/marked-extensions.es.js",
   "scripts": {
@@ -34,8 +34,7 @@
     "rollup-watch": "^2.5.0",
     "scriptjs": "^2.5.8"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "license": "MIT",
   "author": {
     "name": "Jake Hoffner",
