@@ -93,7 +93,7 @@ const NULLABLE = {
  * @@docType:Array
  * @type {RegExp}
  */
-const regex = /(`|<code>)?@@docType: ?([a-zA-Z_?]*(?:<[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?>)?)(`|<\/code>?)?/g;
+const regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:<[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?>)?)(`|<\/code>|<\/pre>)?/g;
 
 /**
  * process all @@docType: tokens and replaces them with the correct display value, and possibly wraps them in a dfn tag
@@ -105,7 +105,7 @@ export function replaceDocTypes (language, pre, content) {
   // unescape HTML to make it easier to process
   content = unescapeHtml(content);
 
-  return content.replace(regex, function (shell, codeEl, value) {
+  return content.replace(regex, function (shell, codeStart, value, codeEnd) {
 
     const nullable = !!value.match(/\?$/);
     value = value.replace('?', '').trim();
@@ -122,7 +122,7 @@ export function replaceDocTypes (language, pre, content) {
       value = mapNullable(language, value);
     }
 
-    return wrap(value, shell, pre || !!codeEl);
+    return wrap(value, shell, pre, codeStart, codeEnd);
   })
 }
 
@@ -198,11 +198,16 @@ function collectionGeneric (language, type, nestedTypes) {
  * @param shell the shell of the @@docType syntax. Used to determine if a ` is present
  * @returns {string}
  */
-function wrap (value, shell, pre) {
+function wrap (value, shell, pre, start, end) {
+  value = escapeHtml(value.trim());
+
   if (pre) {
-    return escapeHtml(value);
+    return value;
+  }
+  else if (start) {
+    return start + value + end;
   }
   else {
-    return `<dfn class="doc-type">${escapeHtml(value.trim())}</dfn>`;
+    return `<dfn class="doc-type">${value}</dfn>`;
   }
 }
