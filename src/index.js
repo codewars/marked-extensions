@@ -72,7 +72,7 @@ export const defaultOptions = {
   loadScript: null,
 
   // if set to a function, will be called back after all external scripts have loaded
-  loadCallback: null
+  onLoaded: null
 };
 
 export const defaultLanguages = [
@@ -188,8 +188,8 @@ function processExternalScripts(options, result) {
   }
 
   Promise.all(promises).then(() => {
-    if (options.loadCallback) {
-      options.loadCallback(result);
+    if (options.onLoaded) {
+      options.onLoaded(result);
     }
   });
 }
