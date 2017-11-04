@@ -147,12 +147,17 @@ describe ('doc-types', function() {
     describe('when nested inside of code', function () {
       it ('should handle doc types within ``', function() {
         let example = replaceDocTypes('javascript', false, '`@@docType:Array<String>`');
-        expect(example).to.equal('`Array (of Strings)`')
+        expect(example).to.equal('`Array (of Strings)`');
       });
 
       it ('should handle doc types within <p><code>@@docType:Array<String></code></p>', function() {
         let example = replaceDocTypes('javascript', false, '<p><code>@@docType:Array<String></code></p>');
-        expect(example).to.equal('<p><code>Array (of Strings)</code></p>')
+        expect(example).to.equal('<p><code>Array (of Strings)</code></p>');
+      });
+
+      it ('should handle doc types without closing tag <code>@@docType:Array<String>', function() {
+        let example = replaceDocTypes('javascript', false, '<code>@@docType:Array<String>');
+        expect(example).to.equal('<code>Array (of Strings)');
       });
 
       it ('should handle doc types without ``', function() {

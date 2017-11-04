@@ -205,7 +205,7 @@ function wrap (value, shell, pre, start, end) {
     return value;
   }
   else if (start) {
-    return start + value + end;
+    return start + value + (end || '');
   }
   else {
     return `<dfn class="doc-type">${value}</dfn>`;
