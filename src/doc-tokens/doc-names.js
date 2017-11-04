@@ -36,7 +36,7 @@ export function replaceDocNames (language, pre, content) {
         }
       }
       else {
-        console.warn('replaceDocNames value is missing:', content);
+        console.warn('replaceDocNames value is missing:', content); // eslint-disable-line no-console
         return '';
       }
     })
