@@ -238,7 +238,7 @@ function processBlocks(options, result) {
         // % is a special token, we know these aren't either languages or extensions
         if (name.indexOf('%') === -1) {
           // if an extension has been defined for the language, track it now
-          if (options.extensions[name] >= 0) {
+          if (options.extensions[name]) {
             result.extensions[name] = true;
           }
           else {

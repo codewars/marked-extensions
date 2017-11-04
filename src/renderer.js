@@ -74,7 +74,7 @@ function setupCode(options, result) {
       else if (language.match(/^tab:/)) {
         return handleTab(result, code, language);
       }
-      else if (result.extensions[language]) {
+      else if (result.extensions.indexOf(language) >= 0) {
         return handleExtension(options, result, code, language);
       }
       else if (language === '%definitions' || language === '%doc') {
@@ -163,10 +163,10 @@ function handleTab(result, code, language) {
  * @param language
  */
 function handleExtension(options, result, code, language) {
-  const ext = result.extensions[language]
+  const ext = options.extensions[language]
 
   if (typeof ext.code === 'function') {
-    return ext(code, options);
+    return ext.code(code, options);
   }
   else {
     return ext.code.replace('{code}', code);

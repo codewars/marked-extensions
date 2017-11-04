@@ -154,4 +154,27 @@ describe('process', function() {
         .to.not.include('of /codes');
     });
   });
+
+  describe ('mermaid', function() {
+    it ('should add html wrapper', function() {
+      let example = process(marked, fixture('mermaid'), {language: 'javascript'});
+      expect(example.html()).to.include('<div class="mermaid">');
+    });
+
+    it ('should detect as an extension', function() {
+      let example = process(marked, fixture('mermaid'), {language: 'javascript'});
+      expect(example.extensions[0]).to.equal('mermaid');
+    });
+
+    it ('should load script if loader is provided', function() {
+      const loaded = [];
+      const load = url => {
+        loaded.push(url);
+        return Promise.resolve();
+      };
+      let example = process(marked, fixture('mermaid'), {language: 'javascript', loadScript: load});
+      expect(loaded.length).to.equal(1);
+      expect(loaded[0]).to.contain('mermaid');
+    });
+  });
 });
