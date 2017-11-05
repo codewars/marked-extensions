@@ -12,7 +12,7 @@ export const defaultOptions = {
       code: code => `<div class="mermaid">${code}</div>`,
       // will lazy load script automatically
       src: 'https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js',
-      afterRender: () => window.mermaid.init()
+      afterRender: () => window.mermaid && window.mermaid.init()
     },
   },
   // set to a method that that will receive a language and return the mapped
