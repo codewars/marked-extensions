@@ -29,6 +29,7 @@ describe ('doc-types', function() {
         check('python', 'Array (of Integers)');
         check('csharp', 'int[]');
         check('java', 'List<Integer>');
+        check('objc', 'NSArray* (of NSNumbers)');
       });
 
       describe('Strings', function () {

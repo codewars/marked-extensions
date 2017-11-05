@@ -159,7 +159,7 @@ function wrapInBlockDiv(type, contents) {
 }
 
 function matchIfBlockLanguage(result, language) {
-  return language.replace(/^if(-not)?: ?/, '').split(',').indexOf(result.language) >= 0;
+  return language.replace(/^if(-not)?: ?/, '').split(',').indexOf(result.originalLanguage) >= 0;
 }
 
 function handleTab(result, code, language) {

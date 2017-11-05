@@ -204,7 +204,11 @@ function collectionType(language, type, nestedType) {
     case 'ruby':
     case 'objc':
     case 'python':
-      return mapType(language, type) + ' (of ' + mapTypes(language, nestedTypes).join('s/') + 's)';
+      var plurals = mapTypes(language, nestedTypes).map(function (s) {
+        return s.replace(' *', '');
+      }).join('s/');
+
+      return mapType(language, type) + ' (of ' + plurals + 's)';
 
     case 'csharp':
       if (type === 'Array' && nestedTypes.length == 1) {
@@ -253,10 +257,13 @@ var STYLES = {
   Param: {
     camel: ['csharp']
   },
+  Class: {
+    upperCamel: ['default']
+  },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java'],
-    pascal: ['csharp']
+    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift'],
+    upperCamel: ['csharp']
   }
 };
 
@@ -274,7 +281,7 @@ function replaceDocNames(language, pre, content) {
           case 'camel':
             return camelCase(value);
 
-          case 'pascal':
+          case 'upperCamel':
             return camelCase(value, true);
 
           default:
@@ -503,7 +510,7 @@ function wrapInBlockDiv(type, contents) {
 }
 
 function matchIfBlockLanguage(result, language) {
-  return language.replace(/^if(-not)?: ?/, '').split(',').indexOf(result.language) >= 0;
+  return language.replace(/^if(-not)?: ?/, '').split(',').indexOf(result.originalLanguage) >= 0;
 }
 
 function handleTab(result, code, language) {

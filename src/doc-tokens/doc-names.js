@@ -7,10 +7,13 @@ export const STYLES = {
   Param: {
     camel: ['csharp']
   },
+  Class: {
+    upperCamel: ['default']
+  },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java'],
-    pascal: ['csharp']
+    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift'],
+    upperCamel: ['csharp']
   }
 }
 
@@ -28,7 +31,7 @@ export function replaceDocNames (language, pre, content) {
           case 'camel':
             return camelCase(value);
 
-          case 'pascal':
+          case 'upperCamel':
             return camelCase(value, true);
 
           default:

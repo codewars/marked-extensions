@@ -32,9 +32,14 @@ describe('process', function() {
     });
 
     describe ('if/not blocks', function() {
-      it ('should filter language automatically by first if none is provided', function() {
-        const example = process(marked, fixture('if-not'));
+      it ('should filter language by original langauge', function() {
+        const example = process(marked, fixture('if-not'), {language: 'javascript'});
         expect(example.html()).to.include('<strong>Javascript!</strong>').and.not.to.include('Other!');
+      });
+
+      it ('should only filter language by original langauge', function() {
+        const example = process(marked, fixture('if-not'));
+        expect(example.html()).to.not.include('<strong>Javascript!</strong>').and.not.to.include('Other!');
       });
 
       it ('should filter languages separated by a comma', function() {

@@ -170,7 +170,11 @@ function collectionType (language, type, nestedType) {
     case 'ruby':
     case 'objc':
     case 'python':
-      return `${mapType(language, type)} (of ${mapTypes(language, nestedTypes).join('s/')}s)`;
+      let plurals = mapTypes(language, nestedTypes)
+        .map(s => s.replace(' *', ''))
+        .join('s/');
+
+      return `${mapType(language, type)} (of ${plurals}s)`;
 
     case 'csharp':
       if (type === 'Array' && nestedTypes.length == 1) {
