@@ -568,7 +568,7 @@ var defaultOptions = {
       // will lazy load script automatically
       src: 'https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js',
       afterRender: function afterRender() {
-        return window.mermaid.init();
+        return window.mermaid && window.mermaid.init();
       }
     }
   },
