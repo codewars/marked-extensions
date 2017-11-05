@@ -65,7 +65,7 @@ function findStyle(type, language) {
 function wrap (shell, type, pre, value) {
   value = value();
   if (shell.indexOf('`') === 0 || pre) {
-    return shell.replace(/@@docName: ?([a-zA-Z0-9?_]*)/, value);
+    return shell.replace(/@@doc(Name|Method|Const|Prop|Class|Param): ?([a-zA-Z0-9?_]*)/, value);
   }
   else {
     return `<dfn class="doc-name doc-name--${type.toLowerCase()}">${value}</dfn>`;
