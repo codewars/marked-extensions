@@ -4,16 +4,18 @@ export const STYLES = {
   Const: {
     upper: ['default']
   },
-  Param: {
-    camel: ['csharp']
+  Method: {
+    upperCamel: ['csharp']
+  },
+  Prop: {
+    upperCamel: ['csharp']
   },
   Class: {
     upperCamel: ['default']
   },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift'],
-    upperCamel: ['csharp']
+    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp'],
   }
 }
 

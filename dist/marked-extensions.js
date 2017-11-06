@@ -257,16 +257,18 @@ var STYLES = {
   Const: {
     upper: ['default']
   },
-  Param: {
-    camel: ['csharp']
+  Method: {
+    upperCamel: ['csharp']
+  },
+  Prop: {
+    upperCamel: ['csharp']
   },
   Class: {
     upperCamel: ['default']
   },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift'],
-    upperCamel: ['csharp']
+    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp']
   }
 };
 
@@ -439,11 +441,6 @@ function setupCode(options, result) {
         return wrapInBlockDiv(language, result.render(code));
       }
 
-      // process line numbers, if they are set (i.e. ruby:10)
-      if (options.lineNumbers) {
-        code = lineNumbers(options, code, language);
-      }
-
       // make sure this is a language and not some random tag
       var foundLanguage = options.findLanguage(language.split(':')[0]);
 
@@ -458,22 +455,25 @@ function setupCode(options, result) {
           return highlightCM(options, code, foundLanguage, language);
         }
       }
+      // process line numbers, if they are set (i.e. ruby:10) in a naive simple way
+      else if (options.lineNumbers) {
+          code = lineNumbers(code, language);
+        }
     }
 
     return wrapLanguage(options, _code.call(result.renderer, code, language), language);
   };
 }
 
-function lineNumbers(options, code, language) {
+function lineNumbers(code, language) {
+  var wrapper = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '@@ ';
+
   var lineNumber = getLineNumber(language);
 
   // if there are line numbers, then add them now starting at the start index
   if (lineNumber > 0) {
     code = code.split('\n').map(function (line) {
-      // pad out the spaces
-      // TODO: this code is naive and can only handle line numbers less than 999
-      var spaces = lineNumber < 10 ? '  ' : lineNumber < 100 ? ' ' : '';
-      return '' + spaces + lineNumber++ + ' ' + line;
+      return '' + wrapper.replace('@@', lineNumber++) + line;
     }).join('\n');
   }
 
@@ -494,12 +494,15 @@ function wrapLanguage(options, code, language) {
 }
 
 function highlightCM(options, code, language, raw) {
-  var lineNumber = options.lineNumbers ? getLineNumber(raw) : null;
   var el = window.document.createElement('div');
   options.cm.runMode(code, options.findMode(language), el);
 
-  var lnHtml = lineNumber > 0 ? '<div class="' + options.lineNumbersGutter + '"></div>' : '';
-  var result = '<pre class="cm-runmode cm-s-' + options.theme + '"><code>' + lnHtml + el.innerHTML + '</code></pre>';
+  var codeHtml = el.innerHTML;
+  if (options.lineNumbers) {
+    codeHtml = lineNumbers(codeHtml, raw, '<span class="cm-line-number">@@</span>');
+  }
+
+  var result = '<pre class="cm-runmode cm-s-' + options.theme + '"><code>' + codeHtml + '</code></pre>';
   return wrapLanguage(options, result, language);
 }
 

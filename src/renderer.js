@@ -84,11 +84,6 @@ function setupCode(options, result) {
         return wrapInBlockDiv(language, result.render(code));
       }
 
-      // process line numbers, if they are set (i.e. ruby:10)
-      if (options.lineNumbers) {
-        code = lineNumbers(options, code, language);
-      }
-
       // make sure this is a language and not some random tag
       const foundLanguage = options.findLanguage(language.split(':')[0]);
 
@@ -103,22 +98,23 @@ function setupCode(options, result) {
           return highlightCM(options, code, foundLanguage, language);
         }
       }
+      // process line numbers, if they are set (i.e. ruby:10) in a naive simple way
+      else if (options.lineNumbers) {
+        code = lineNumbers(code, language);
+      }
     }
 
     return wrapLanguage(options, _code.call(result.renderer, code, language), language);
   }
 }
 
-function lineNumbers(options, code, language) {
+function lineNumbers(code, language, wrapper = '@@ ') {
   let lineNumber = getLineNumber(language);
 
   // if there are line numbers, then add them now starting at the start index
   if (lineNumber > 0) {
     code = code.split('\n').map(line => {
-      // pad out the spaces
-      // TODO: this code is naive and can only handle line numbers less than 999
-      let spaces = lineNumber < 10 ? '  ' : (lineNumber < 100 ? ' ' : '')
-      return `${spaces}${lineNumber++} ${line}`
+      return `${wrapper.replace('@@', lineNumber++)}${line}`
     }).join('\n');
   }
 
@@ -140,12 +136,15 @@ function wrapLanguage(options, code, language) {
 }
 
 function highlightCM(options, code, language, raw) {
-  let lineNumber = options.lineNumbers ? getLineNumber(raw) : null;
   const el = window.document.createElement('div');
   options.cm.runMode(code, options.findMode(language), el);
 
-  const lnHtml = lineNumber > 0 ? `<div class="${options.lineNumbersGutter}"></div>` : '';
-  const result = `<pre class="cm-runmode cm-s-${options.theme}"><code>${lnHtml}${el.innerHTML}</code></pre>`;
+  let codeHtml = el.innerHTML;
+  if (options.lineNumbers) {
+    codeHtml = lineNumbers(codeHtml, raw, '<span class="cm-line-number">@@</span>');
+  }
+
+  const result = `<pre class="cm-runmode cm-s-${options.theme}"><code>${codeHtml}</code></pre>`;
   return wrapLanguage(options, result, language);
 }
 

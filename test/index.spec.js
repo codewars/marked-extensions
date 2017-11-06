@@ -60,7 +60,7 @@ describe('process', function() {
 
   describe ('CodeMirror', function() {
     const cmBasicExample = process(marked, fixture('basic'), {cm: CodeMirror});
-    const cmNumberedExample = process(marked, fixture('numbered'), {cm: CodeMirror});
+
     // const cmNoNumberedExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbers: false});
     // const cmNumberedNoGutterExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbersGutter: true});
 
@@ -77,9 +77,10 @@ describe('process', function() {
       expect(cmBasicExample.html()).to.include('cm-variable');
     });
 
-    describe('gutters', function() {
-      it ('should include gutters when line numbers are included', function() {
-        expect(cmNumberedExample.html()).to.include('cm-runmode-linenumbers-gutter');
+    describe('line numbers', function() {
+      it ('should include line number wrapper when CM used', function() {
+        const example = process(marked, fixture('numbered'), {lineNumbers: true, cm: CodeMirror});
+        expect(example.html()).to.include('<span class="cm-line-number">9</span>');
       });
     });
 
