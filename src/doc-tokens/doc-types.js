@@ -11,7 +11,7 @@ import { escapeHtml, unescapeHtml } from '../strings'
  */
 const TYPES = {
   void: {
-    'undefined': ['javascript'],
+    'undefined': ['javascript', 'coffeescript'],
     nil: ['ruby'],
     None: ['python']
   },
@@ -29,7 +29,7 @@ const TYPES = {
     dict: ['python'],
     Dictionary: ['csharp'],
     HashMap: ['java'],
-    Object: ['javascript']
+    Object: ['javascript', 'typescript', 'coffeescript']
   },
   collection: {
     List: ['java'],
@@ -43,7 +43,7 @@ const TYPES = {
     default: 'Array'
   },
   list: {
-    Array: ['javascript', 'ruby', 'python', 'typescript'],
+    Array: ['javascript', 'ruby', 'python', 'typescript', 'coffeescript'],
     'std::list': ['cpp'],
     default: 'List'
   },
@@ -59,6 +59,7 @@ const TYPES = {
     Int: ['swift'],
     'NSNumber *': ['objc'],
     Number: ['javascript'],
+    number: ['typescript'],
     default: 'Integer'
   },
   boolean: {

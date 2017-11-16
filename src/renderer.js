@@ -89,7 +89,7 @@ function setupCode(options, result) {
 
       if (foundLanguage) {
         // if filtering is enabled and this is not the active language then filter it out
-        if (options.filterLanguages && foundLanguage !== result.language) {
+        if (options.filterLanguages && foundLanguage !== result.language && result.language) {
           return '';
         }
 

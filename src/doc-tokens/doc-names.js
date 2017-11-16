@@ -15,7 +15,7 @@ export const STYLES = {
   },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp'],
+    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp'],
   }
 }
 

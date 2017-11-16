@@ -14,61 +14,66 @@ describe('process', function() {
   const unfilteredExample = process(marked, fixture('basic'), {filterLanguages: false});
 
   describe('Basic', function() {
-    it ('should return a valid object', function() {
+    it('should return a valid object', function() {
       expect(basicExample).to.be.an('object')
         .and.to.have.all.keys('raw', 'icons', 'languages', 'language', 'originalLanguage', 'extensions',
           'renderer', 'tabs', 'headers', 'preprocessed', 'html', 'render', 'afterRender');
     });
 
-    it ('should count h1s', function() {
+    it('should count h1s', function() {
       basicExample.html()
       expect(basicExample.headers.h1.length).to.equal(1);
     });
   });
 
-  describe ('language filtering', function() {
-    it ('should filter by first language if non is set', function() {
+  describe('language filtering', function() {
+    it('should filter by first language if non is set', function() {
       expect(basicExample.html()).to.include('javascript').and.not.to.include('ruby');
     });
 
-    describe ('if/not blocks', function() {
-      it ('should filter language by original langauge', function() {
+    describe('if/not blocks', function() {
+      it('should filter language by original langauge', function() {
         const example = process(marked, fixture('if-not'), {language: 'javascript'});
         expect(example.html()).to.include('<strong>Javascript!</strong>').and.not.to.include('Other!');
       });
 
-      it ('should only filter language by original langauge', function() {
+      it('should only filter language by original langauge', function() {
         const example = process(marked, fixture('if-not'));
         expect(example.html()).to.not.include('<strong>Javascript!</strong>').and.not.to.include('Other!');
       });
 
-      it ('should filter languages separated by a comma', function() {
+      it('should filter languages separated by a comma', function() {
         const example = process(marked, fixture('if-not'), { language: 'csharp' });
         expect(example.html()).to.include('<strong>Other!</strong>').and.not.to.include('Javascript!');
       });
     });
+
+    it('should not filter out code blocks within lists', function() {
+      const example = process(marked, fixture('code-lists'), { language: 'c' });
+      expect(example.html()).to.include('<code class="lang-c">').and.to.include('<code class="lang-cpp">');
+    });
   });
 
 
-  describe ('YAML/Meta', function() {
+  describe('YAML/Meta', function() {
     const metaExample = process(marked, fixture('meta'), {jsYaml: yaml});
 
-    it ('should extract meta data', function() {
+    it('should extract meta data', function() {
       expect(metaExample.meta.options.theme).to.equal('test');
     });
   });
 
-  describe ('CodeMirror', function() {
+  describe('CodeMirror', function() {
     const cmBasicExample = process(marked, fixture('basic'), {cm: CodeMirror});
 
     // const cmNoNumberedExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbers: false});
     // const cmNumberedNoGutterExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbersGutter: true});
 
-    it ('should return a valid object', function() {
+    it('should return a valid object', function() {
       expect(cmBasicExample).to.be.an('object');
     });
 
-    it ('should include theme within content', function() {
+    it('should include theme within content', function() {
       expect(cmBasicExample.html()).to.include('neo');
     });
 
@@ -78,13 +83,13 @@ describe('process', function() {
     });
 
     describe('line numbers', function() {
-      it ('should include line number wrapper when CM used', function() {
+      it('should include line number wrapper when CM used', function() {
         const example = process(marked, fixture('numbered'), {lineNumbers: true, cm: CodeMirror});
         expect(example.html()).to.include('<span class="cm-line-number">9</span>');
       });
     });
 
-    it ('should load language files', function() {
+    it('should load language files', function() {
       const loaded = [];
       const load = url => {
         loaded.push(url);
@@ -98,9 +103,9 @@ describe('process', function() {
     });
   });
 
-  describe ('Docs', function() {
+  describe('Docs', function() {
 
-    it ('should process javascript', function() {
+    it('should process javascript', function() {
       let example = process(marked, fixture('doc'), {language: 'javascript'});
       expect(example.html()).to.include('<dfn class="doc-type">Number</dfn>')
         .and.to.include('Array (of Strings)')
@@ -109,7 +114,7 @@ describe('process', function() {
         .and.to.not.include('first_names');
     });
 
-    it ('should process ruby', function() {
+    it('should process ruby', function() {
       let example = process(marked, fixture('doc'), {language: 'ruby'});
       expect(example.html()).to.include('<dfn class="doc-type">Integer</dfn>')
         .and.to.include('Array (of Strings)')
@@ -118,7 +123,7 @@ describe('process', function() {
         .and.to.not.include('firstNames');
     });
 
-    it ('should process csharp', function() {
+    it('should process csharp', function() {
       let example = process(marked, fixture('doc'), {language: 'csharp'});
       expect(example.html()).to.include('<dfn class="doc-type">int</dfn>')
         .and.to.include('string[]')
@@ -128,7 +133,7 @@ describe('process', function() {
         .and.to.not.include('first_names');
     });
 
-    it ('should not render doc type tags within pre > code elements', function() {
+    it('should not render doc type tags within pre > code elements', function() {
       let example = process(marked, fixture('doc-constraints'), {language: 'javascript'});
       expect(example.html())
         .to.include('<code>')
@@ -137,7 +142,7 @@ describe('process', function() {
     });
 
     // test a specific bug that was found
-    it ('should handle doc types within ``', function() {
+    it('should handle doc types within ``', function() {
       let example = process(marked, "`@@docType:Array`", {language: 'javascript'});
       expect(example.html())
         .to.include('Array')
@@ -145,7 +150,7 @@ describe('process', function() {
     });
 
     // test a specific bug that was found
-    it ('should handle Array doc types within ``', function() {
+    it('should handle Array doc types within ``', function() {
       let example = process(marked, "`@@docType:Array<String>`", {language: 'javascript'});
       expect(example.html())
         .to.include('Array (of Strings)')
@@ -153,7 +158,7 @@ describe('process', function() {
     });
 
     // test a specific bug that was found
-    it ('should handle doc types without ``', function() {
+    it('should handle doc types without ``', function() {
       let example = process(marked, "@@docType:Array<String>", {language: 'javascript'});
       expect(example.html())
         .to.include('Array (of Strings)')
@@ -161,18 +166,18 @@ describe('process', function() {
     });
   });
 
-  describe ('mermaid', function() {
-    it ('should add html wrapper', function() {
+  describe('mermaid', function() {
+    it('should add html wrapper', function() {
       let example = process(marked, fixture('mermaid'), {language: 'javascript'});
       expect(example.html()).to.include('<div class="mermaid">');
     });
 
-    it ('should detect as an extension', function() {
+    it('should detect as an extension', function() {
       let example = process(marked, fixture('mermaid'), {language: 'javascript'});
       expect(example.extensions[0]).to.equal('mermaid');
     });
 
-    it ('should load script if loader is provided', function() {
+    it('should load script if loader is provided', function() {
       const loaded = [];
       const load = url => {
         loaded.push(url);
@@ -184,8 +189,8 @@ describe('process', function() {
     });
   });
 
-  describe ('languageWrapper', function() {
-    it ('should wrap when using a function', function() {
+  describe('languageWrapper', function() {
+    it('should wrap when using a function', function() {
       let example = process(marked, fixture('basic'), {languageWrapper: (code, l) => `<test class="${l}">${code}</test>`});
       expect(example.html()).to.include('<test class="javascript"><pre><code');
     });

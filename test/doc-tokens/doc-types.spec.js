@@ -25,6 +25,7 @@ describe ('doc-types', function() {
         before(() => content('Array<Integer>'));
 
         check('javascript', 'Array (of Numbers)');
+        check('typescript', 'Array<number>');
         check('ruby', 'Array (of Integers)');
         check('python', 'Array (of Integers)');
         check('csharp', 'int[]');
@@ -35,6 +36,7 @@ describe ('doc-types', function() {
       describe('Strings', function () {
         before(() => content('Array<String>'));
         check('javascript', 'Array (of Strings)');
+        check('typescript', 'Array<string>');
         check('ruby', 'Array (of Strings)');
         check('python', 'Array (of Strings)');
         check('csharp', 'string[]');
@@ -57,6 +59,7 @@ describe ('doc-types', function() {
         before(() => content('List<String>'));
 
         check('javascript', 'Array (of Strings)');
+        check('typescript', 'Array<string>');
         check('ruby', 'Array (of Strings)');
         check('python', 'Array (of Strings)');
         check('csharp', 'List<string>');
