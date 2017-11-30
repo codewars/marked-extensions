@@ -94,7 +94,7 @@ const NULLABLE = {
  * @@docType:Array
  * @type {RegExp}
  */
-const regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:<[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?>)?)(`|<\/code>|<\/pre>)?/g;
+const regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:(?:<|&lt;)[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?(?:>|&gt;))?)(`|<\/code>|<\/pre>)?/g;
 
 /**
  * process all @@docType: tokens and replaces them with the correct display value, and possibly wraps them in a dfn tag
@@ -103,13 +103,10 @@ const regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:<[a-zA-Z?]*(?:(?:,|, 
  * @param content The content to be replaced. Can handle replacing multiple tags at once
  */
 export function replaceDocTypes (language, pre, content) {
-  // unescape HTML to make it easier to process
-  content = unescapeHtml(content);
-
   return content.replace(regex, function (shell, codeStart, value, codeEnd) {
-
     const nullable = !!value.match(/\?$/);
     value = value.replace('?', '').trim();
+    value = unescapeHtml(value);
 
     if (value.indexOf('<') > 0) {
       const parts = value.split(/[<>]/);
@@ -124,7 +121,7 @@ export function replaceDocTypes (language, pre, content) {
     }
 
     return wrap(value, shell, pre, codeStart, codeEnd);
-  })
+  });
 }
 
 function mapNullable (language, value) {

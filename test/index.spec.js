@@ -24,6 +24,11 @@ describe('process', function() {
       basicExample.html()
       expect(basicExample.headers.h1.length).to.equal(1);
     });
+
+    it('should escape scripts in backticks', function() {
+      const example = process(marked, '`<script>test</script>`');
+      expect(example.html()).to.contain('&lt;script&gt;').and.to.not.contain('<script>');
+    });
   });
 
   describe('language filtering', function() {
