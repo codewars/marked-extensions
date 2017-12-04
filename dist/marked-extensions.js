@@ -52,7 +52,7 @@ function unescapeHtml(text) {
  */
 var TYPES = {
   void: {
-    'undefined': ['javascript'],
+    'undefined': ['javascript', 'coffeescript'],
     nil: ['ruby'],
     None: ['python']
   },
@@ -70,7 +70,7 @@ var TYPES = {
     dict: ['python'],
     Dictionary: ['csharp'],
     HashMap: ['java'],
-    Object: ['javascript']
+    Object: ['javascript', 'typescript', 'coffeescript']
   },
   collection: {
     List: ['java'],
@@ -84,7 +84,7 @@ var TYPES = {
     default: 'Array'
   },
   list: {
-    Array: ['javascript', 'ruby', 'python', 'typescript'],
+    Array: ['javascript', 'ruby', 'python', 'typescript', 'coffeescript'],
     'std::list': ['cpp'],
     default: 'List'
   },
@@ -100,6 +100,7 @@ var TYPES = {
     Int: ['swift'],
     'NSNumber *': ['objc'],
     Number: ['javascript'],
+    number: ['typescript'],
     default: 'Integer'
   },
   boolean: {
@@ -133,7 +134,7 @@ var NULLABLE = {
    * @@docType:Array
    * @type {RegExp}
    */
-};var regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:<[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?>)?)(`|<\/code>|<\/pre>)?/g;
+};var regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:(?:<|&lt;)[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?(?:>|&gt;))?)(`|<\/code>|<\/pre>)?/g;
 
 /**
  * process all @@docType: tokens and replaces them with the correct display value, and possibly wraps them in a dfn tag
@@ -142,13 +143,10 @@ var NULLABLE = {
  * @param content The content to be replaced. Can handle replacing multiple tags at once
  */
 function replaceDocTypes(language, pre, content) {
-  // unescape HTML to make it easier to process
-  content = unescapeHtml(content);
-
   return content.replace(regex, function (shell, codeStart, value, codeEnd) {
-
     var nullable = !!value.match(/\?$/);
     value = value.replace('?', '').trim();
+    value = unescapeHtml(value);
 
     if (value.indexOf('<') > 0) {
       var parts = value.split(/[<>]/);
@@ -268,7 +266,7 @@ var STYLES = {
   },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java', 'coffeescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp']
+    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp']
   }
 };
 
@@ -446,7 +444,7 @@ function setupCode(options, result) {
 
       if (foundLanguage) {
         // if filtering is enabled and this is not the active language then filter it out
-        if (options.filterLanguages && foundLanguage !== result.language) {
+        if (options.filterLanguages && foundLanguage !== result.language && result.language) {
           return '';
         }
 
