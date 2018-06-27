@@ -1,0 +1,4 @@
+```rub
+def a
+end
+```

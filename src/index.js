@@ -140,8 +140,6 @@ function render(options, result) {
   return html;
 }
 
-
-
 /**
  * Creates the afterRender function that is added to the result, which can be called once the
  * processed html has been added to the DOM to initialize any extensions that may have been loaded.
@@ -228,7 +226,8 @@ function processLanguage(result) {
  * @param result
  */
 function processBlocks(options, result) {
-  const blocks = (result.preprocessed.match(/^(```|~~~) ?(.*) *$/gm) || []).map(m => m.replace(/(```|~~~) ?/g, ''));
+  let blocks = result.preprocessed.match(/^(```|~~~) ?(.*) *$/gm) || [];
+  blocks = blocks.map(m => m.replace(/(```|~~~) ?/g, ''));
 
   // loop through each block and track which are languages and which are extensions
   blocks.forEach((text) => {

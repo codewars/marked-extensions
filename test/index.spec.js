@@ -10,8 +10,6 @@ require('codemirror/addon/runmode/runmode.js');
 describe('process', function() {
 
   const basicExample = process(marked, fixture('basic'));
-  const languageBasicExample = process(marked, fixture('basic'), {language: 'ruby'});
-  const unfilteredExample = process(marked, fixture('basic'), {filterLanguages: false});
 
   describe('Basic', function() {
     it('should return a valid object', function() {
@@ -56,6 +54,11 @@ describe('process', function() {
     it('should not filter out code blocks within lists', function() {
       const example = process(marked, fixture('code-lists'), { language: 'c' });
       expect(example.html()).to.include('<code class="lang-c">').and.to.include('<code class="lang-cpp">');
+    });
+
+    it('should not break if language is not found', function() {
+      const example = process(marked, fixture('invalid-language'), { language: 'ruby' });
+      expect(example.html()).to.include('<code class="lang-rub">');
     });
   });
 

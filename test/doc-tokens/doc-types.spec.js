@@ -22,7 +22,7 @@ describe ('doc-types', function() {
   describe ('types', function() {
     describe('Arrays', function () {
       describe('Integers', function () {
-        before(() => content('Array<Integer>'));
+        beforeEach(() => content('Array<Integer>'));
 
         check('javascript', 'Array (of Numbers)');
         check('typescript', 'Array<number>');
@@ -34,7 +34,7 @@ describe ('doc-types', function() {
       });
 
       describe('Strings', function () {
-        before(() => content('Array<String>'));
+        beforeEach(() => content('Array<String>'));
         check('javascript', 'Array (of Strings)');
         check('typescript', 'Array<string>');
         check('ruby', 'Array (of Strings)');
@@ -47,7 +47,7 @@ describe ('doc-types', function() {
 
     describe('Lists', function () {
       describe('Integers', function () {
-        before(() => content('List<Integer>'));
+        beforeEach(() => content('List<Integer>'));
         check('javascript', 'Array (of Numbers)');
         check('ruby', 'Array (of Integers)');
         check('python', 'Array (of Integers)');
@@ -56,7 +56,7 @@ describe ('doc-types', function() {
       });
 
       describe('Strings', function () {
-        before(() => content('List<String>'));
+        beforeEach(() => content('List<String>'));
 
         check('javascript', 'Array (of Strings)');
         check('typescript', 'Array<string>');
@@ -69,7 +69,7 @@ describe ('doc-types', function() {
 
     describe('Typed Hashes', function () {
       describe('Hash Strings', function () {
-        before(() => content('Hash<String>'));
+        beforeEach(() => content('Hash<String>'));
 
         check('javascript', 'Object (of Strings)');
         check('ruby', 'Hash (of Strings)');
@@ -81,7 +81,7 @@ describe ('doc-types', function() {
 
     describe('Key Typed Hashes', function () {
       describe('Hash Strings & Integers', function () {
-        before(() => content('Hash<String, Integer>'));
+        beforeEach(() => content('Hash<String, Integer>'));
 
         check('javascript', 'Object (of Strings/Numbers)');
         check('ruby', 'Hash (of Strings/Integers)');
@@ -93,7 +93,7 @@ describe ('doc-types', function() {
 
     describe('Common Types', function () {
       describe('void', function () {
-        before(() => content('void'));
+        beforeEach(() => content('void'));
 
         check('javascript', 'undefined');
         check('ruby', 'nil');
@@ -103,7 +103,7 @@ describe ('doc-types', function() {
       });
 
       describe('null', function () {
-        before(() => content('null'));
+        beforeEach(() => content('null'));
 
         check('javascript', 'null');
         check('ruby', 'nil');
@@ -114,7 +114,7 @@ describe ('doc-types', function() {
       });
 
       describe('hash', function () {
-        before(() => content('Hash'));
+        beforeEach(() => content('Hash'));
 
         check('javascript', 'Object');
         check('ruby', 'Hash');
@@ -124,7 +124,7 @@ describe ('doc-types', function() {
       });
 
       describe('object', function () {
-        before(() => content('Object'));
+        beforeEach(() => content('Object'));
 
         check('javascript', 'Object');
         check('ruby', 'Hash');
@@ -135,7 +135,7 @@ describe ('doc-types', function() {
       });
 
       describe('integer', function () {
-        before(() => content('Integer'));
+        beforeEach(() => content('Integer'));
 
         check('javascript', 'Number');
         check('ruby', 'Integer');
