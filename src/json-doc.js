@@ -35,9 +35,9 @@ function exampleRows(json) {
 
 function exampleRow(example, index) {
   const name = example.name || `Example #${index+1}`;
-  let md = `**${name}**|`;
-  md += example.args.map(arg => JSON.stringify(arg)).join('|');
-  md += `|${example.returns || ''}`;
+  let md = `*${name}*|`;
+  md += example.args.map(arg => '`' + JSON.stringify(arg) + '`').join('|');
+  md += `|\`${example.returns || ''}\``;
   return md;
 }
 

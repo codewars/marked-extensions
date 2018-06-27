@@ -396,11 +396,11 @@ function exampleRows(json) {
 
 function exampleRow(example, index) {
   var name = example.name || 'Example #' + (index + 1);
-  var md = '**' + name + '**|';
+  var md = '*' + name + '*|';
   md += example.args.map(function (arg) {
-    return JSON.stringify(arg);
+    return '`' + JSON.stringify(arg) + '`';
   }).join('|');
-  md += '|' + (example.returns || '');
+  md += '|`' + (example.returns || '') + '`';
   return md;
 }
 
