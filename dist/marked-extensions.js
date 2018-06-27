@@ -360,6 +360,94 @@ function processDocTokens(result, html, pre) {
   return names;
 }
 
+function jsonDoc(code) {
+  var json = JSON.parse(code);
+  var md = [methodName(json)];
+  md.push('```%doc\nParameters:');
+  md.push(parameters(json));
+  md.push('Return Value:');
+  md.push(returnType(json));
+  if (json.constraints && json.constraints.length) {
+    md.push('Constraints:');
+    md.push(json.constraints.join('\n'));
+  }
+  md.push('```');
+  if (json.examples && json.examples.length) {
+    md.push('```%block');
+    md.push('#### Examples');
+    md.push(exampleHeader(json));
+    md.push(exampleRows(json));
+    md.push('```');
+  }
+
+  return md.join('\n');
+}
+
+function exampleRows(json) {
+  return json.examples.map(exampleRow).join('\n');
+}
+
+function exampleRow(example, index) {
+  var name = example.name || 'Example #' + (index + 1);
+  var md = '**' + name + '**|';
+  md += example.args.map(function (arg) {
+    return JSON.stringify(arg);
+  }).join('|');
+  md += '|' + (example.returns || '');
+  return md;
+}
+
+function exampleHeader(json) {
+  var line1 = [''];
+  var line2 = [''];
+  Object.keys(getArgs(json)).forEach(function (key) {
+    line1.push(key);
+    line2.push('');
+  });
+  line1.push('returns');
+  return line1.join('|') + '\n-' + line2.join('|-') + '|-';
+}
+
+function getArgs(json) {
+  return json.args || json.params || json.parameters || {};
+}
+
+function methodName(json) {
+  var args = Object.keys(getArgs(json)).map(function (key) {
+    return '@@docName:' + key;
+  });
+  return '### `@@docGlobal:Challenge.@@docMethod:' + json.method + '}(' + args.join(', ') + ')`';
+}
+
+function parameters(json) {
+  var args = getArgs(json);
+  var params = Object.keys(args).map(function (key) {
+    var arg = args[key];
+    var type = typeof arg === 'string' ? arg : arg.type;
+    var md = '@@docName:' + key + ': @@docType:' + (type || 'String');
+    if (arg.desc) {
+      md += ' - ' + arg.desc;
+    }
+
+    return md;
+  });
+
+  return params.join('\n');
+}
+
+function returnType(json) {
+  if (json.returns) {
+    var type = typeof json.returns === 'string' ? json.returns : json.returns.type;
+    var md = '@@docType:' + (type || 'void');
+    if (json.returns.desc) {
+      md += ' - ' + json.returns.desc;
+    }
+
+    return md;
+  }
+  return '@@docType:void';
+}
+
 function buildRenderer(marked, options, result) {
   var renderer = result.renderer = new marked.Renderer();
 
@@ -435,6 +523,8 @@ function setupCode(options, result) {
         return handleExtension(options, result, code, language);
       } else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
+      } else if (language === '%jsondoc') {
+        return render(jsonDoc(code));
       } else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
       }
@@ -801,7 +891,8 @@ function processLanguage(result) {
  * @param result
  */
 function processBlocks(options, result) {
-  var blocks = (result.preprocessed.match(/^(```|~~~) ?(.*) *$/gm) || []).map(function (m) {
+  var blocks = result.preprocessed.match(/^(```|~~~) ?(.*) *$/gm) || [];
+  blocks = blocks.map(function (m) {
     return m.replace(/(```|~~~) ?/g, '');
   });
 

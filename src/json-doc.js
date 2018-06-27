@@ -1,5 +1,3 @@
-import { values } from "./objects";
-
 export function jsonDoc(code) {
   let json = JSON.parse(code);
   const md = [methodName(json)];
