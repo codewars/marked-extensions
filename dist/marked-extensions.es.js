@@ -357,10 +357,10 @@ function processDocTokens(result, html, pre) {
   return names;
 }
 
-function jsonDoc(code) {
+function methodDoc(code) {
   try {
     var json = JSON.parse(code);
-    var md = [methodName(json)];
+    var md = [methodHeader(json)];
     if (json.desc) {
       md.push(json.desc);
     }
@@ -388,16 +388,18 @@ function jsonDoc(code) {
 }
 
 function exampleRows(json) {
-  return json.examples.map(exampleRow).join('\n');
+  return json.examples.map(function (v, i) {
+    return exampleRow(json, v, i);
+  }).join('\n');
 }
 
-function exampleRow(example, index) {
-  var name = example.name || 'Example #' + (index + 1);
+function exampleRow(json, example, index) {
+  var name = example.name || 'Ex. #' + (index + 1);
   var md = '*' + name + '*|';
   md += example.args.map(function (arg) {
     return '`' + JSON.stringify(arg) + '`';
   }).join('|');
-  md += '|`' + (example.returns || '') + '`';
+  md += '|`' + (JSON.stringify(example.returns) || '') + '`';
   return md;
 }
 
@@ -408,7 +410,7 @@ function exampleHeader(json) {
     line1.push(key);
     line2.push('');
   });
-  line1.push('returns');
+  line1.push('Return Value');
   return line1.join('|') + '\n-' + line2.join('|-') + '|-';
 }
 
@@ -417,10 +419,20 @@ function getArgs(json) {
 }
 
 function methodName(json) {
+  var globalName = json.global !== false ? '@@docGlobal:' + (json.global || 'Challenge') + '.' : '';
+  // if a class is provided, it will always be shown and overrides global
+  if (json.class) {
+    globalName = '@@docClass:' + json.class + '.';
+  }
+
+  return globalName + '@@docMethod:' + json.method;
+}
+
+function methodHeader(json) {
   var args = Object.keys(getArgs(json)).map(function (key) {
     return '`@@docName:' + key + '`';
   });
-  return '### `@@docGlobal:Challenge.@@docMethod:' + json.method + '`(' + args.join(', ') + ')';
+  return '### `' + methodName(json) + '`(' + args.join(', ') + ')';
 }
 
 function parameters(json) {
@@ -527,8 +539,8 @@ function setupCode(options, result) {
         return handleExtension(options, result, code, language);
       } else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
-      } else if (language === '%jsondoc') {
-        return render(jsonDoc(code));
+      } else if (language === '%method-doc') {
+        return wrapInBlockDiv('docs', render(methodDoc(code)));
       } else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
       }

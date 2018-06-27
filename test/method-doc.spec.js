@@ -3,20 +3,20 @@ import marked from 'marked'
 import { expect } from 'chai'
 import { fixture } from './test-utils'
 
-describe('%jsondoc', () => {
+describe('%method-doc', () => {
   it('should render json as formatted markdown', () => {
-    const example = process(marked, fixture('docjson')).html();
+    const example = process(marked, fixture('method-doc')).html();
     expect(example).to.include('>Examples</h4>');
     expect(example).to.include('<th>files</th>');
     expect(example).to.include('<code><dfn class="doc-class">');
     expect(example).to.include('- A filtered array of files that were opened</p>');
-    expect(example).to.include('<td>[1,2,3]</td>');
-    expect(example).to.include('<td>&quot;js&quot;</td>');
-    expect(example).to.include('<td><strong>Example #2</strong></td>');
+    expect(example).to.include('<td><code>[1,2,3]</code></td>');
+    expect(example).to.include('<td><code>&quot;js&quot;</code></td>');
+    expect(example).to.include('<td><em>Ex. #2</em></td>');
   });
 
   it('should render json as formatted markdown', () => {
-    const example = process(marked, fixture('docjson-invalid')).html();
+    const example = process(marked, fixture('method-doc-invalid')).html();
     expect(example).to.not.include('>Examples</h4>');
     expect(example).to.include('openFiles');
   });

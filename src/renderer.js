@@ -1,6 +1,6 @@
 import { assignMissing } from './objects'
 import { processDocTokens } from './doc-tokens'
-import { jsonDoc } from './json-doc';
+import { methodDoc } from './method-doc';
 
 
 export function buildRenderer(marked, options, result) {
@@ -82,8 +82,8 @@ function setupCode(options, result) {
       else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       }
-      else if (language === '%jsondoc') {
-        return render(jsonDoc(code));
+      else if (language === '%method-doc') {
+        return wrapInBlockDiv('docs', render(methodDoc(code)));
       }
       else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));

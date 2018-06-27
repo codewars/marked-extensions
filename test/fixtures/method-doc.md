@@ -1,7 +1,7 @@
 # Documentation
 This is some text
 
-```%jsondoc
+```%method-doc
 {
   "method": "open_files",
   "desc": "Loops through any files that are not opened and opens them",

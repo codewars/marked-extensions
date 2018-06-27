@@ -1,7 +1,7 @@
-export function jsonDoc(code) {
+export function methodDoc(code) {
   try {
     let json = JSON.parse(code);
-    const md = [methodName(json)];
+    const md = [methodHeader(json)];
     if (json.desc) {
       md.push(json.desc);
     }
@@ -30,14 +30,14 @@ export function jsonDoc(code) {
 }
 
 function exampleRows(json) {
-  return json.examples.map(exampleRow).join('\n');
+  return json.examples.map((v, i) => exampleRow(json, v, i)).join('\n');
 }
 
-function exampleRow(example, index) {
-  const name = example.name || `Example #${index+1}`;
+function exampleRow(json, example, index) {
+  const name = example.name || `Ex. #${index+1}`;
   let md = `*${name}*|`;
   md += example.args.map(arg => '`' + JSON.stringify(arg) + '`').join('|');
-  md += `|\`${example.returns || ''}\``;
+  md += `|\`${JSON.stringify(example.returns) || ''}\``;
   return md;
 }
 
@@ -48,7 +48,7 @@ function exampleHeader(json) {
     line1.push(key)
     line2.push('');
   });
-  line1.push('returns');
+  line1.push('Return Value');
   return `${line1.join('|')}\n-${line2.join('|-')}|-`;
 }
 
@@ -57,8 +57,18 @@ function getArgs(json) {
 }
 
 function methodName(json) {
+  let globalName = json.global !== false ? `@@docGlobal:${json.global || 'Challenge'}.` : '';
+  // if a class is provided, it will always be shown and overrides global
+  if (json.class) {
+    globalName = `@@docClass:${json.class}.`;
+  }
+
+  return `${globalName}@@docMethod:${json.method}`;
+}
+
+function methodHeader(json) {
   const args = Object.keys(getArgs(json)).map(key => `\`@@docName:${key}\``);
-  return `### \`@@docGlobal:Challenge.@@docMethod:${json.method}\`(${args.join(', ')})`;
+  return `### \`${methodName(json)}\`(${args.join(', ')})`;
 }
 
 function parameters(json) {
