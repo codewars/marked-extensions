@@ -1,24 +1,32 @@
 export function jsonDoc(code) {
-  let json = JSON.parse(code);
-  const md = [methodName(json)];
-  md.push('```%doc\nParameters:');
-  md.push(parameters(json));
-  md.push('Return Value:');
-  md.push(returnType(json));
-  if (json.constraints && json.constraints.length) {
-    md.push('Constraints:');
-    md.push(json.constraints.join('\n'));
-  }
-  md.push('```');
-  if (json.examples && json.examples.length) {
-    md.push('```%block');
-    md.push('#### Examples');
-    md.push(exampleHeader(json));
-    md.push(exampleRows(json));
+  try {
+    let json = JSON.parse(code);
+    const md = [methodName(json)];
+    if (json.desc) {
+      md.push(json.desc);
+    }
+    md.push('```%doc\nParameters:');
+    md.push(parameters(json));
+    md.push('Return Value:');
+    md.push(returnType(json));
+    if (json.constraints && json.constraints.length) {
+      md.push('Constraints:');
+      md.push(json.constraints.join('\n'));
+    }
     md.push('```');
-  }
+    if (json.examples && json.examples.length) {
+      md.push('```%block-doc');
+      md.push('#### Examples');
+      md.push(exampleHeader(json));
+      md.push(exampleRows(json));
+      md.push('```');
+    }
 
-  return md.join('\n');
+    return md.join('\n');
+  }
+  catch (ex) {
+    return '`Failed to render %jsonblock: ' + ex.message + '`';
+  }
 }
 
 function exampleRows(json) {
@@ -49,8 +57,8 @@ function getArgs(json) {
 }
 
 function methodName(json) {
-  const args = Object.keys(getArgs(json)).map(key => `@@docName:${key}`);
-  return `### \`@@docGlobal:Challenge.@@docMethod:${json.method}}(${args.join(', ')})\``;
+  const args = Object.keys(getArgs(json)).map(key => `\`@@docName:${key}\``);
+  return `### \`@@docGlobal:Challenge.@@docMethod:${json.method}\`(${args.join(', ')})`;
 }
 
 function parameters(json) {
