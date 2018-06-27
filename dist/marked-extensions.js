@@ -377,7 +377,7 @@ function jsonDoc(code) {
     }
     md.push('```');
     if (json.examples && json.examples.length) {
-      md.push('```%block-doc');
+      md.push('```%doc-block');
       md.push('#### Examples');
       md.push(exampleHeader(json));
       md.push(exampleRows(json));
