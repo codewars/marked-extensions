@@ -29,7 +29,7 @@ describe ('doc-types', function() {
         check('ruby', 'Array (of Integers)');
         check('python', 'Array (of Integers)');
         check('csharp', 'int[]');
-        check('java', 'List<Integer>');
+        check('java', 'Integer[]');
         check('objc', 'NSArray* (of NSNumbers)');
       });
 
@@ -40,7 +40,7 @@ describe ('doc-types', function() {
         check('ruby', 'Array (of Strings)');
         check('python', 'Array (of Strings)');
         check('csharp', 'string[]');
-        check('java', 'List<String>');
+        check('java', 'String[]');
         check('cpp', 'std::list<std::string>');
       });
     });

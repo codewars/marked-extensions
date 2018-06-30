@@ -190,6 +190,7 @@ function collectionType (language, type, nestedType) {
         return `${mapType(language, type)} (of ${plurals}${addS})`;
 
       case 'csharp':
+      case 'java':
         if (type === 'Array' && nestedTypes.length == 1) {
           return `${mapType(language, nestedType)}[]`;
         }
