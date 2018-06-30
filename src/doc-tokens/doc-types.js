@@ -179,8 +179,6 @@ function collectionType (language, type, nestedType) {
   const nestedTypes = nestedType.split(/, ?/);
   if (isTransformedType(type)) {
     switch (language) {
-      // case 'javascript':
-
       case 'ruby':
       case 'objc':
       case 'python':

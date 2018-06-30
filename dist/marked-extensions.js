@@ -220,8 +220,6 @@ function collectionType(language, type, nestedType) {
   var nestedTypes = nestedType.split(/, ?/);
   if (isTransformedType(type)) {
     switch (language) {
-      // case 'javascript':
-
       case 'ruby':
       case 'objc':
       case 'python':
@@ -390,8 +388,10 @@ function methodDoc(code) {
     if (json.desc) {
       md.push(json.desc);
     }
+    md.push('```%doc');
+
     if (json.args) {
-      md.push('```%doc\nParameters:');
+      md.push('Parameters:');
       md.push(parameters(json));
     }
     md.push('Return Value:');
@@ -428,9 +428,11 @@ function exampleRows(json) {
 function exampleRow(json, example, index) {
   var name = example.name || 'Ex. #' + (index + 1);
   var md = '*' + name + '*|';
-  md += example.args.map(function (arg) {
-    return '`' + JSON.stringify(arg) + '`';
-  }).join('|');
+  if (example.args) {
+    md += example.args.map(function (arg) {
+      return '`' + JSON.stringify(arg) + '`';
+    }).join('|');
+  }
   md += '|`' + (JSON.stringify(example.returns) || '') + '`';
   return md;
 }
