@@ -31,6 +31,7 @@ describe ('doc-types', function() {
         check('csharp', 'int[]');
         check('java', 'Integer[]');
         check('objc', 'NSArray* (of NSNumbers)');
+        check('kotlin', 'Array<Int>');
       });
 
       describe('Strings', function () {
@@ -65,12 +66,17 @@ describe ('doc-types', function() {
     describe('Lists', function () {
       describe('Integers', function () {
         beforeEach(() => content('List<Integer>'));
-        // check('javascript', 'Array (of Numbers)');
+
         check('javascript', 'Array<Number>');
         check('ruby', 'Array (of Integers)');
         check('python', 'Array (of Integers)');
         check('csharp', 'List<int>');
         check('java', 'List<Integer>');
+        check('kotlin', 'List<Int>');
+        check('swift', 'Array<Int>');
+        check('c', 'int[]');
+        check('haskell', '[Int]');
+        check('go', '[]int');
       });
 
       describe('Strings', function () {

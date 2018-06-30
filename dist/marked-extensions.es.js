@@ -81,9 +81,9 @@ var TYPES = {
     default: 'Array'
   },
   list: {
-    Array: ['javascript', 'ruby', 'python', 'typescript', 'coffeescript'],
+    List: ['java', 'csharp', 'scala', 'groovy', 'kotlin'],
     'std::list': ['cpp'],
-    default: 'List'
+    default: 'Array'
   },
   string: {
     string: ['csharp', 'typescript'],
@@ -93,8 +93,8 @@ var TYPES = {
     default: 'String'
   },
   integer: {
-    int: ['csharp', 'cpp', 'c'],
-    Int: ['swift'],
+    int: ['csharp', 'cpp', 'c', 'go'],
+    Int: ['swift', 'haskell', 'kotlin'],
     'NSNumber *': ['objc'],
     Number: ['javascript'],
     number: ['typescript'],
@@ -109,7 +109,7 @@ var TYPES = {
   },
   float: {
     float: ['csharp'],
-    Number: ['javascript'],
+    Number: ['javascript', 'coffeescript', 'typescript'],
     default: 'Float'
   }
 };
@@ -231,6 +231,21 @@ function collectionType(language, type, nestedType) {
       case 'java':
         if (type === 'Array' && nestedTypes.length == 1) {
           return mapType(language, nestedType) + '[]';
+        }
+        break;
+      case 'c':
+        if (type === 'List' && nestedTypes.length == 1) {
+          return mapType(language, nestedType) + '[]';
+        }
+        break;
+      case 'haskell':
+        if ((type === 'List' || type === 'Array') && nestedTypes.length == 1) {
+          return '[' + mapType(language, nestedType) + ']';
+        }
+        break;
+      case 'go':
+        if ((type === 'List' || type === 'Array') && nestedTypes.length == 1) {
+          return '[]' + mapType(language, nestedType);
         }
         break;
     }
