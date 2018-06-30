@@ -12,7 +12,6 @@ describe('%method-doc', () => {
     expect(example).to.include('- A filtered array of files that were opened</p>');
     expect(example).to.include('<td><code>[1,2,3]</code></td>');
     expect(example).to.include('<td><code>&quot;js&quot;</code></td>');
-    expect(example).to.include('<td><em>Ex. #2</em></td>');
   });
 
   it('should render json as formatted markdown', () => {

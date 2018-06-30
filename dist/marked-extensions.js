@@ -435,27 +435,46 @@ function methodDoc(code) {
   }
 }
 
+function hasExampleNames(json) {
+  return json.examples && json.examples.filter(function (e) {
+    return !!e.name;
+  }).length > 0;
+}
 function exampleRows(json) {
-  return json.examples.map(function (v, i) {
-    return exampleRow(json, v, i);
+  var hasExamples = hasExampleNames(json);
+  return json.examples.map(function (v) {
+    return exampleRow(json, v, hasExamples);
   }).join('\n');
 }
 
-function exampleRow(json, example, index) {
-  var name = example.name || 'Ex. #' + (index + 1);
-  var md = '*' + name + '*|';
+function exampleRow(json, example, hasExamples) {
+  var md = '';
+  if (hasExamples) {
+    var name = example.name;
+    md = '*' + (name || 'Example') + '*|';
+  }
+
   if (example.args) {
     md += example.args.map(function (arg) {
-      return '`' + JSON.stringify(arg) + '`';
+      return formatExampleValue(arg);
     }).join('|');
   }
-  md += '|`' + (JSON.stringify(example.returns) || '') + '`';
+  md += '|' + (formatExampleValue(example.returns) || '');
   return md;
 }
 
+function formatExampleValue(value) {
+  return '<code>' + JSON.stringify(value) + '</code>';
+}
+
 function exampleHeader(json) {
-  var line1 = [''];
-  var line2 = [''];
+  var line1 = [];
+  var line2 = [];
+  if (hasExampleNames(json)) {
+    line1.push('');
+    line2.push('');
+  }
+
   Object.keys(getArgs(json)).forEach(function (key) {
     line1.push(key);
     line2.push('');

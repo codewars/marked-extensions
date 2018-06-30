@@ -37,23 +37,40 @@ export function methodDoc(code) {
   }
 }
 
+function hasExampleNames(json) {
+  return json.examples && json.examples.filter(e => !!e.name).length > 0;
+}
 function exampleRows(json) {
-  return json.examples.map((v, i) => exampleRow(json, v, i)).join('\n');
+  const hasExamples = hasExampleNames(json);
+  return json.examples.map(v => exampleRow(json, v, hasExamples)).join('\n');
 }
 
-function exampleRow(json, example, index) {
-  const name = example.name || `Ex. #${index+1}`;
-  let md = `*${name}*|`;
-  if (example.args) {
-    md += example.args.map(arg => '`' + JSON.stringify(arg) + '`').join('|');
+function exampleRow(json, example, hasExamples) {
+  let md = '';
+  if (hasExamples) {
+    const name = example.name;
+    md = `*${name || 'Example'}*|`;
   }
-  md += `|\`${JSON.stringify(example.returns) || ''}\``;
+
+  if (example.args) {
+    md += example.args.map(arg => formatExampleValue(arg)).join('|');
+  }
+  md += `|${formatExampleValue(example.returns) || ''}`;
   return md;
 }
 
+function formatExampleValue(value) {
+  return `<code>${JSON.stringify(value)}</code>`;
+}
+
 function exampleHeader(json) {
-  const line1 = [''];
-  const line2 = [''];
+  const line1 = [];
+  const line2 = [];
+  if (hasExampleNames(json)){
+    line1.push('');
+    line2.push('');
+  }
+
   Object.keys(getArgs(json)).forEach(key => {
     line1.push(key)
     line2.push('');
