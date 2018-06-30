@@ -91,10 +91,12 @@ const NULLABLE = {
  * `@@docType:Array<String, Int>`
  * `@@docType:Array<String,Int>`
  * @@docType:Array<String, Int>
+ * @@docType: Promise<Array<Int>>
  * @@docType:Array
  * @type {RegExp}
  */
-const regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:(?:<|&lt;)[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?(?:>|&gt;))?)(`|<\/code>|<\/pre>)?/g;
+const regex = /(`|<code>|<pre>)?@@docType: ?([\w_?]*(?:(?:<|&lt;)[\w?]*(?:[,<]?\s?\w*>?){0,3}(?:>|&gt;))?)(`|<\/code>|<\/pre>)?/g;
+const nestedRegex = /(?:<|&lt;)([\w?]*(?:[,<]?\s?\w*>?){0,3})(?:>|&gt;)/g;
 
 /**
  * process all @@docType: tokens and replaces them with the correct display value, and possibly wraps them in a dfn tag
@@ -108,13 +110,7 @@ export function replaceDocTypes (language, pre, content) {
     value = value.replace('?', '').trim();
     value = unescapeHtml(value);
 
-    if (value.indexOf('<') > 0) {
-      const parts = value.split(/[<>]/);
-      value = collectionType(language, parts[0], parts[1]);
-    }
-    else {
-      value = mapType(language, value);
-    }
+    value = maybeMapGeneric(language, value);
 
     if (nullable) {
       value = mapNullable(language, value);
@@ -135,6 +131,21 @@ function mapNullable (language, value) {
   return value;
 }
 
+function maybeMapGeneric(language, value) {
+  const parts = value.split(nestedRegex).filter(p => !!p);
+
+  if (parts.length < 2) {
+    return mapType(language, value);
+  }
+  else if (parts.length === 2) {
+    return collectionType(language, parts[0], parts[1]);
+  }
+  else {
+    const root = parts.shift();
+    const mapped = parts.map(p => collectionType(language, p));
+    return `${root}<${mapped.join(', ')}>`;
+  }
+}
 
 function mapType (language, type, _default) {
   const map = TYPES[type.toLowerCase()];
@@ -160,33 +171,39 @@ function mapType (language, type, _default) {
   return type;
 }
 
+function isTransformedType(type) {
+  return Object.keys(TYPES).indexOf(type.toLowerCase()) > -1;
+}
+
 function collectionType (language, type, nestedType) {
   const nestedTypes = nestedType.split(/, ?/);
+  if (isTransformedType(type)) {
+    switch (language) {
+      // case 'javascript':
 
-  switch (language) {
-    case 'javascript':
-    case 'ruby':
-    case 'objc':
-    case 'python':
-      let plurals = mapTypes(language, nestedTypes)
-        .map(s => s.replace(' *', ''))
-        .join('s/');
+      case 'ruby':
+      case 'objc':
+      case 'python':
+        let plurals = mapTypes(language, nestedTypes)
+          .map(s => s.replace(' *', ''))
+          .join('s/');
 
-      return `${mapType(language, type)} (of ${plurals}s)`;
+        let addS = plurals.indexOf(')') > 0 ? '' : 's';
+        return `${mapType(language, type)} (of ${plurals}${addS})`;
 
-    case 'csharp':
-      if (type === 'Array' && nestedTypes.length == 1) {
-        return `${mapType(language, nestedType)}[]`;
-      }
-      return collectionGeneric(language, type, nestedTypes);
-
-    default:
-      return collectionGeneric(language, type, nestedTypes);
+      case 'csharp':
+        if (type === 'Array' && nestedTypes.length == 1) {
+          return `${mapType(language, nestedType)}[]`;
+        }
+        break;
+    }
   }
+  const result = collectionGeneric(language, type, nestedTypes);
+  return result;
 }
 
 function mapTypes(language, types) {
-  return types.map(t => mapType(language, t));
+  return types.map(t => maybeMapGeneric(language, t));
 }
 
 function collectionGeneric (language, type, nestedTypes) {

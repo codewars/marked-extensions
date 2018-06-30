@@ -128,10 +128,12 @@ var NULLABLE = {
    * `@@docType:Array<String, Int>`
    * `@@docType:Array<String,Int>`
    * @@docType:Array<String, Int>
+   * @@docType: Promise<Array<Int>>
    * @@docType:Array
    * @type {RegExp}
    */
-};var regex = /(`|<code>|<pre>)?@@docType: ?([a-zA-Z_?]*(?:(?:<|&lt;)[a-zA-Z?]*(?:(?:,|, )[a-zA-Z]*)?(?:>|&gt;))?)(`|<\/code>|<\/pre>)?/g;
+};var regex = /(`|<code>|<pre>)?@@docType: ?([\w_?]*(?:(?:<|&lt;)[\w?]*(?:[,<]?\s?\w*>?){0,3}(?:>|&gt;))?)(`|<\/code>|<\/pre>)?/g;
+var nestedRegex = /(?:<|&lt;)([\w?]*(?:[,<]?\s?\w*>?){0,3})(?:>|&gt;)/g;
 
 /**
  * process all @@docType: tokens and replaces them with the correct display value, and possibly wraps them in a dfn tag
@@ -145,12 +147,7 @@ function replaceDocTypes(language, pre, content) {
     value = value.replace('?', '').trim();
     value = unescapeHtml(value);
 
-    if (value.indexOf('<') > 0) {
-      var parts = value.split(/[<>]/);
-      value = collectionType(language, parts[0], parts[1]);
-    } else {
-      value = mapType(language, value);
-    }
+    value = maybeMapGeneric(language, value);
 
     if (nullable) {
       value = mapNullable(language, value);
@@ -169,6 +166,24 @@ function mapNullable(language, value) {
   }
 
   return value;
+}
+
+function maybeMapGeneric(language, value) {
+  var parts = value.split(nestedRegex).filter(function (p) {
+    return !!p;
+  });
+
+  if (parts.length < 2) {
+    return mapType(language, value);
+  } else if (parts.length === 2) {
+    return collectionType(language, parts[0], parts[1]);
+  } else {
+    var root = parts.shift();
+    var mapped = parts.map(function (p) {
+      return collectionType(language, p);
+    });
+    return root + '<' + mapped.join(', ') + '>';
+  }
 }
 
 function mapType(language, type, _default) {
@@ -194,34 +209,40 @@ function mapType(language, type, _default) {
   return type;
 }
 
+function isTransformedType(type) {
+  return Object.keys(TYPES).indexOf(type.toLowerCase()) > -1;
+}
+
 function collectionType(language, type, nestedType) {
   var nestedTypes = nestedType.split(/, ?/);
+  if (isTransformedType(type)) {
+    switch (language) {
+      // case 'javascript':
 
-  switch (language) {
-    case 'javascript':
-    case 'ruby':
-    case 'objc':
-    case 'python':
-      var plurals = mapTypes(language, nestedTypes).map(function (s) {
-        return s.replace(' *', '');
-      }).join('s/');
+      case 'ruby':
+      case 'objc':
+      case 'python':
+        var plurals = mapTypes(language, nestedTypes).map(function (s) {
+          return s.replace(' *', '');
+        }).join('s/');
 
-      return mapType(language, type) + ' (of ' + plurals + 's)';
+        var addS = plurals.indexOf(')') > 0 ? '' : 's';
+        return mapType(language, type) + ' (of ' + plurals + addS + ')';
 
-    case 'csharp':
-      if (type === 'Array' && nestedTypes.length == 1) {
-        return mapType(language, nestedType) + '[]';
-      }
-      return collectionGeneric(language, type, nestedTypes);
-
-    default:
-      return collectionGeneric(language, type, nestedTypes);
+      case 'csharp':
+        if (type === 'Array' && nestedTypes.length == 1) {
+          return mapType(language, nestedType) + '[]';
+        }
+        break;
+    }
   }
+  var result = collectionGeneric(language, type, nestedTypes);
+  return result;
 }
 
 function mapTypes(language, types) {
   return types.map(function (t) {
-    return mapType(language, t);
+    return maybeMapGeneric(language, t);
   });
 }
 
@@ -263,7 +284,7 @@ var STYLES = {
   },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp']
+    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp', 'solidity']
   }
 };
 
@@ -329,6 +350,8 @@ function replaceDocGlobals(language, pre, content) {
       // languages which should keep the global class
       case 'java':
       case 'csharp':
+      case 'kotlin':
+      case 'scala':
         return wrap$2(value.replace(/@@docGlobal: ?/, ''), pre);
 
       // all other languages remove the global class
@@ -364,13 +387,19 @@ function methodDoc(code) {
     if (json.desc) {
       md.push(json.desc);
     }
-    md.push('```%doc\nParameters:');
-    md.push(parameters(json));
+    if (json.args) {
+      md.push('```%doc\nParameters:');
+      md.push(parameters(json));
+    }
     md.push('Return Value:');
     md.push(returnType(json));
     if (json.constraints && json.constraints.length) {
       md.push('Constraints:');
       md.push(json.constraints.join('\n'));
+    }
+    if (json.errors && json.errors.length) {
+      md.push('Errors:');
+      md.push(json.errors.join('\n'));
     }
     md.push('```');
     if (json.examples && json.examples.length) {
@@ -540,7 +569,7 @@ function setupCode(options, result) {
       } else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       } else if (language === '%method-doc') {
-        return wrapInBlockDiv('docs', render(methodDoc(code)));
+        return wrapInBlockDiv('docs method-doc', render(methodDoc(code)));
       } else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
       }

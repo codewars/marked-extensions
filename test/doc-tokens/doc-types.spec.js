@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { replaceDocTypes } from '../../src/doc-tokens/doc-types'
-import { escapeHtml } from '../../src/strings'
+import { unescapeHtml } from '../../src/strings'
 
 let _content = null;
 function content(value) {
@@ -13,8 +13,8 @@ function content(value) {
 
 function check(language, expected) {
   it (`${language}: ${expected}`, function() {
-    const actual = replaceDocTypes(language, false, content());
-    expect(actual).to.include(`<dfn class="doc-type">${escapeHtml(expected)}</dfn>`);
+    const actual = unescapeHtml(replaceDocTypes(language, false, content()));
+    expect(actual).to.include(`<dfn class="doc-type">${expected}</dfn>`);
   });
 }
 
@@ -24,7 +24,7 @@ describe ('doc-types', function() {
       describe('Integers', function () {
         beforeEach(() => content('Array<Integer>'));
 
-        check('javascript', 'Array (of Numbers)');
+        check('javascript', 'Array<Number>');
         check('typescript', 'Array<number>');
         check('ruby', 'Array (of Integers)');
         check('python', 'Array (of Integers)');
@@ -35,7 +35,7 @@ describe ('doc-types', function() {
 
       describe('Strings', function () {
         beforeEach(() => content('Array<String>'));
-        check('javascript', 'Array (of Strings)');
+        check('javascript', 'Array<String>');
         check('typescript', 'Array<string>');
         check('ruby', 'Array (of Strings)');
         check('python', 'Array (of Strings)');
@@ -45,10 +45,28 @@ describe ('doc-types', function() {
       });
     });
 
+    describe('Arrays of Arrays', () => {
+      describe('Integers', () => {
+        beforeEach(() => content('Array<Array<Integer>>'));
+
+        check('javascript', 'Array<Array<Number>>');
+      });
+    });
+
+    describe('Nested Objects', () => {
+      describe('Promises', () => {
+        beforeEach(() => content('Promise<Array<Integer>>'));
+
+        check('ruby', 'Promise<Array (of Integers)>');
+        check('javascript', 'Promise<Array<Number>>');
+      });
+    });
+
     describe('Lists', function () {
       describe('Integers', function () {
         beforeEach(() => content('List<Integer>'));
-        check('javascript', 'Array (of Numbers)');
+        // check('javascript', 'Array (of Numbers)');
+        check('javascript', 'Array<Number>');
         check('ruby', 'Array (of Integers)');
         check('python', 'Array (of Integers)');
         check('csharp', 'List<int>');
@@ -58,7 +76,7 @@ describe ('doc-types', function() {
       describe('Strings', function () {
         beforeEach(() => content('List<String>'));
 
-        check('javascript', 'Array (of Strings)');
+        check('javascript', 'Array<String>');
         check('typescript', 'Array<string>');
         check('ruby', 'Array (of Strings)');
         check('python', 'Array (of Strings)');
@@ -71,7 +89,7 @@ describe ('doc-types', function() {
       describe('Hash Strings', function () {
         beforeEach(() => content('Hash<String>'));
 
-        check('javascript', 'Object (of Strings)');
+        check('javascript', 'Object<String>');
         check('ruby', 'Hash (of Strings)');
         check('python', 'dict (of Strings)');
         check('csharp', 'Dictionary<string>');
@@ -83,7 +101,7 @@ describe ('doc-types', function() {
       describe('Hash Strings & Integers', function () {
         beforeEach(() => content('Hash<String, Integer>'));
 
-        check('javascript', 'Object (of Strings/Numbers)');
+        check('javascript', 'Object<String, Number>');
         check('ruby', 'Hash (of Strings/Integers)');
         check('python', 'dict (of Strings/Integers)');
         check('csharp', 'Dictionary<string, int>');
@@ -150,23 +168,23 @@ describe ('doc-types', function() {
   describe ('parsing', function() {
     describe('when nested inside of code', function () {
       it ('should handle doc types within ``', function() {
-        let example = replaceDocTypes('javascript', false, '`@@docType:Array<String>`');
-        expect(example).to.equal('`Array (of Strings)`');
+        let example = unescapeHtml(replaceDocTypes('javascript', false, '`@@docType:Array<String>`'));
+        expect(example).to.equal('`Array<String>`');
       });
 
       it ('should handle doc types within <p><code>@@docType:Array<String></code></p>', function() {
-        let example = replaceDocTypes('javascript', false, '<p><code>@@docType:Array<String></code></p>');
-        expect(example).to.equal('<p><code>Array (of Strings)</code></p>');
+        let example = unescapeHtml(replaceDocTypes('javascript', false, '<p><code>@@docType:Array<String></code></p>'));
+        expect(example).to.equal('<p><code>Array<String></code></p>');
       });
 
       it ('should handle doc types without closing tag <code>@@docType:Array<String>', function() {
-        let example = replaceDocTypes('javascript', false, '<code>@@docType:Array<String>');
-        expect(example).to.equal('<code>Array (of Strings)');
+        let example = unescapeHtml(replaceDocTypes('javascript', false, '<code>@@docType:Array<String>'));
+        expect(example).to.equal('<code>Array<String>');
       });
 
       it ('should handle doc types without ``', function() {
-        let example = replaceDocTypes('javascript', false, 'test @@docType:Array<String> test');
-        expect(example).to.equal('test <dfn class="doc-type">Array (of Strings)</dfn> test');
+        let example = unescapeHtml(replaceDocTypes('javascript', false, 'test @@docType:Array<String> test'));
+        expect(example).to.equal('test <dfn class="doc-type">Array<String></dfn> test');
       });
     });
   });

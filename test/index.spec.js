@@ -3,6 +3,7 @@ import marked from 'marked'
 import yaml from 'js-yaml'
 import { expect } from 'chai'
 import { fixture } from './test-utils'
+import { escapeHtml } from '../src/strings'
 
 const CodeMirror = require('codemirror/lib/codemirror');
 require('codemirror/addon/runmode/runmode.js');
@@ -116,7 +117,7 @@ describe('process', function() {
     it('should process javascript', function() {
       let example = process(marked, fixture('doc'), {language: 'javascript'});
       expect(example.html()).to.include('<dfn class="doc-type">Number</dfn>')
-        .and.to.include('Array (of Strings)')
+        .and.to.include(escapeHtml('Array<String>'))
         .and.to.include('firstNames')
         .and.to.not.include('Challenge.')
         .and.to.not.include('first_names');
@@ -161,7 +162,7 @@ describe('process', function() {
     it('should handle Array doc types within ``', function() {
       let example = process(marked, "`@@docType:Array<String>`", {language: 'javascript'});
       expect(example.html())
-        .to.include('Array (of Strings)')
+        .to.include(escapeHtml('Array<String>'))
         .to.not.include('of /codes');
     });
 
@@ -169,7 +170,7 @@ describe('process', function() {
     it('should handle doc types without ``', function() {
       let example = process(marked, "@@docType:Array<String>", {language: 'javascript'});
       expect(example.html())
-        .to.include('Array (of Strings)')
+        .to.include(escapeHtml('Array<String>'))
         .to.not.include('of /codes');
     });
   });

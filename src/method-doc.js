@@ -5,13 +5,19 @@ export function methodDoc(code) {
     if (json.desc) {
       md.push(json.desc);
     }
-    md.push('```%doc\nParameters:');
-    md.push(parameters(json));
+    if (json.args) {
+      md.push('```%doc\nParameters:');
+      md.push(parameters(json));
+    }
     md.push('Return Value:');
     md.push(returnType(json));
     if (json.constraints && json.constraints.length) {
       md.push('Constraints:');
       md.push(json.constraints.join('\n'));
+    }
+    if (json.errors && json.errors.length) {
+      md.push('Errors:');
+      md.push(json.errors.join('\n'));
     }
     md.push('```');
     if (json.examples && json.examples.length) {

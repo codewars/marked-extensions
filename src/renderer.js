@@ -83,7 +83,7 @@ function setupCode(options, result) {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       }
       else if (language === '%method-doc') {
-        return wrapInBlockDiv('docs', render(methodDoc(code)));
+        return wrapInBlockDiv('docs method-doc', render(methodDoc(code)));
       }
       else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
