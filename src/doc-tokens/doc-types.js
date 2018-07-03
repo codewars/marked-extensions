@@ -36,6 +36,11 @@ const TYPES = {
     Collection: ['csharp'],
     _alias: 'list'
   },
+  enumerable: {
+    IEnumerable: ['csharp'],
+    vector: ['cpp'],
+    _alias: 'array'
+  },
   array: {
     List: ['java'],
     'NSArray*': ['objc'],
@@ -191,12 +196,13 @@ function collectionType (language, type, nestedType) {
 
       case 'csharp':
       case 'java':
-        if (type === 'Array' && nestedTypes.length == 1) {
+        // if an array and not wrapping another array
+        if (type === 'Array' && nestedTypes.length == 1 && nestedTypes[0].indexOf('<') === -1) {
           return `${mapType(language, nestedType)}[]`;
         }
         break;
       case 'c':
-        if (type === 'List' && nestedTypes.length == 1) {
+        if (type === 'List' && nestedTypes.length == 1 && nestedTypes[0].indexOf('<') === -1) {
           return `${mapType(language, nestedType)}[]`;
         }
         break;

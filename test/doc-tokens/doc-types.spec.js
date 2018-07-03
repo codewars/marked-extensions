@@ -51,6 +51,7 @@ describe ('doc-types', function() {
         beforeEach(() => content('Array<Array<Integer>>'));
 
         check('javascript', 'Array<Array<Number>>');
+        check('csharp', 'Array<int[]>');
       });
     });
 
@@ -60,6 +61,16 @@ describe ('doc-types', function() {
 
         check('ruby', 'Promise<Array (of Integers)>');
         check('javascript', 'Promise<Array<Number>>');
+      });
+    });
+
+    describe('Enumerables', () => {
+      describe('Integers', () => {
+        beforeEach(() => content('Enumerable<Integer>'));
+
+        check('csharp', 'IEnumerable<int>');
+        check('cpp', 'vector<int>');
+        check('javascript', 'Array<Number>');
       });
     });
 
