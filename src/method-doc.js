@@ -1,27 +1,44 @@
-export function methodDoc(code) {
+import { escapeHtml } from './strings';
+
+
+export function methodDoc(code, language) {
   try {
     let json = JSON.parse(code);
-    const md = [methodHeader(json)];
-    if (json.desc) {
-      md.push(json.desc);
-    }
-    md.push('```%doc');
 
-    if (json.args) {
-      md.push('Parameters:');
-      md.push(parameters(json));
+    // support language specific overrides
+    if (json.languages && json.languages[language]) {
+      Object.assign(json, json.languages[language]);
     }
-    md.push('Return Value:');
-    md.push(returnType(json));
-    if (json.constraints && json.constraints.length) {
-      md.push('Constraints:');
-      md.push(json.constraints.join('\n'));
+
+    const md = [];
+
+    if (!json.examplesOnly) {
+      if (json.method) {
+        md.push(methodHeader(json));
+      }
+      if (json.desc) {
+        md.push(json.desc);
+      }
+
+      md.push('```%doc');
+
+      if (json.args) {
+        md.push('Parameters:');
+        md.push(parameters(json));
+      }
+      md.push('Return Value:');
+      md.push(returnType(json));
+      if (json.constraints && json.constraints.length) {
+        md.push('Constraints:');
+        md.push(json.constraints.join('\n'));
+      }
+      if (json.errors && json.errors.length) {
+        md.push('Errors:');
+        md.push(json.errors.join('\n'));
+      }
+      md.push('```');
     }
-    if (json.errors && json.errors.length) {
-      md.push('Errors:');
-      md.push(json.errors.join('\n'));
-    }
-    md.push('```');
+
     if (json.examples && json.examples.length) {
       md.push('```%doc-block');
       md.push('#### Examples');
@@ -103,7 +120,7 @@ function parameters(json) {
   const params = Object.keys(args).map(key => {
     const arg = args[key];
     const type = typeof arg === 'string' ? arg : arg.type;
-    let md = `@@docName:${key}: @@docType:${type || 'String'}`;
+    let md = `@@docName:${key}: ${formatDocType(json, type, 'String')}`;
     if (arg.desc) {
       md += ` - ${arg.desc}`;
     }
@@ -117,7 +134,7 @@ function parameters(json) {
 function returnType(json) {
   if (json.returns) {
     const type = typeof json.returns === 'string' ? json.returns : json.returns.type;
-    let md = `@@docType:${type || 'void'}`;
+    let md = formatDocType (json, type, 'void');
     if (json.returns.desc) {
       md += ` - ${json.returns.desc}`;
     }
@@ -125,4 +142,13 @@ function returnType(json) {
     return md;
   }
   return '@@docType:void';
+}
+
+function formatDocType(json, type, defaultValue) {
+  if (json.formatTypes === false) {
+    return `<dfn class="doc-type">${escapeHtml(type)}</dfn>`;
+  }
+  else {
+    return `@@docType:${type || defaultValue || 'null'}`
+  }
 }

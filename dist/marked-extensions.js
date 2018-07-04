@@ -108,6 +108,10 @@ var TYPES = {
     number: ['typescript'],
     default: 'Integer'
   },
+  long: {
+    long: ['csharp', 'java', 'c', 'cpp'],
+    _alias: 'integer'
+  },
   boolean: {
     bool: ['csharp', 'c', 'cpp'],
     Bool: ['swift'],
@@ -403,30 +407,44 @@ function processDocTokens(result, html, pre) {
   return names;
 }
 
-function methodDoc(code) {
+function methodDoc(code, language) {
   try {
     var json = JSON.parse(code);
-    var md = [methodHeader(json)];
-    if (json.desc) {
-      md.push(json.desc);
-    }
-    md.push('```%doc');
 
-    if (json.args) {
-      md.push('Parameters:');
-      md.push(parameters(json));
+    // support language specific overrides
+    if (json.languages && json.languages[language]) {
+      Object.assign(json, json.languages[language]);
     }
-    md.push('Return Value:');
-    md.push(returnType(json));
-    if (json.constraints && json.constraints.length) {
-      md.push('Constraints:');
-      md.push(json.constraints.join('\n'));
+
+    var md = [];
+
+    if (!json.examplesOnly) {
+      if (json.method) {
+        md.push(methodHeader(json));
+      }
+      if (json.desc) {
+        md.push(json.desc);
+      }
+
+      md.push('```%doc');
+
+      if (json.args) {
+        md.push('Parameters:');
+        md.push(parameters(json));
+      }
+      md.push('Return Value:');
+      md.push(returnType(json));
+      if (json.constraints && json.constraints.length) {
+        md.push('Constraints:');
+        md.push(json.constraints.join('\n'));
+      }
+      if (json.errors && json.errors.length) {
+        md.push('Errors:');
+        md.push(json.errors.join('\n'));
+      }
+      md.push('```');
     }
-    if (json.errors && json.errors.length) {
-      md.push('Errors:');
-      md.push(json.errors.join('\n'));
-    }
-    md.push('```');
+
     if (json.examples && json.examples.length) {
       md.push('```%doc-block');
       md.push('#### Examples');
@@ -515,7 +533,7 @@ function parameters(json) {
   var params = Object.keys(args).map(function (key) {
     var arg = args[key];
     var type = typeof arg === 'string' ? arg : arg.type;
-    var md = '@@docName:' + key + ': @@docType:' + (type || 'String');
+    var md = '@@docName:' + key + ': ' + formatDocType(json, type, 'String');
     if (arg.desc) {
       md += ' - ' + arg.desc;
     }
@@ -529,7 +547,7 @@ function parameters(json) {
 function returnType(json) {
   if (json.returns) {
     var type = typeof json.returns === 'string' ? json.returns : json.returns.type;
-    var md = '@@docType:' + (type || 'void');
+    var md = formatDocType(json, type, 'void');
     if (json.returns.desc) {
       md += ' - ' + json.returns.desc;
     }
@@ -537,6 +555,14 @@ function returnType(json) {
     return md;
   }
   return '@@docType:void';
+}
+
+function formatDocType(json, type, defaultValue) {
+  if (json.formatTypes === false) {
+    return '<dfn class="doc-type">' + escapeHtml(type) + '</dfn>';
+  } else {
+    return '@@docType:' + (type || defaultValue || 'null');
+  }
 }
 
 function buildRenderer(marked, options, result) {
@@ -615,7 +641,7 @@ function setupCode(options, result) {
       } else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       } else if (language === '%method-doc') {
-        return wrapInBlockDiv('docs method-doc', render(methodDoc(code)));
+        return wrapInBlockDiv('docs method-doc', render(methodDoc(code, result.originalLanguage)));
       } else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
       }

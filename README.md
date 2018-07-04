@@ -35,3 +35,32 @@ Return Value:
 
 var processed = process(marked, markdown, { language: 'javascript' });  
 ~~~
+
+### `%method-doc`
+~~~
+```%method-doc
+{
+    "method": "",
+    "desc": "",
+    "args": {
+          "arg1": { "type": "", "desc": "" },
+          "arg2": { "type": "", "desc": "" }
+    },
+    "returns": { "type": "", "desc": "" },
+    "constraints": [
+        ""
+    ],
+    "examples": [
+        {"args": [], "returns": null },
+        {"args": [], "returns": null }
+    ],
+    "examplesOnly": false,
+    "formatTypes": true,
+    "languages": {
+      "javascript": {
+        "method": ""
+      }
+    }
+}
+```
+~~~

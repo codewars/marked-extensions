@@ -67,6 +67,10 @@ const TYPES = {
     number: ['typescript'],
     default: 'Integer'
   },
+  long: {
+    long: ['csharp', 'java', 'c', 'cpp'],
+    _alias: 'integer'
+  },
   boolean: {
     bool: ['csharp', 'c', 'cpp'],
     Bool: ['swift'],

@@ -52,6 +52,15 @@ describe ('doc-types', function() {
 
         check('javascript', 'Array<Array<Number>>');
         check('csharp', 'Array<int[]>');
+        check('java', 'List<Integer[]>');
+      });
+
+      describe('Strings', () => {
+        beforeEach(() => content('Array<Array<String>>'));
+
+        check('javascript', 'Array<Array<String>>');
+        check('csharp', 'Array<string[]>');
+        check('java', 'List<String[]>');
       });
     });
 
