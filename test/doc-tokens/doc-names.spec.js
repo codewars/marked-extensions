@@ -48,6 +48,8 @@ describe ('doc names', function() {
       check('csharp', 'Method', 'FooBar');
       check('java', 'Method', 'fooBar');
       check('swift', 'Method', 'fooBar');
+      check('haskell', 'Method', 'fooBar');
+      check('clojure', 'Method', 'foo-bar');
     });
   });
 });

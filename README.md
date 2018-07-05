@@ -54,9 +54,9 @@ var processed = process(marked, markdown, { language: 'javascript' });
         {"args": [], "returns": null },
         {"args": [], "returns": null }
     ],
-    "examplesOnly": false,
-    "formatTypes": true,
-    "languages": {
+    "examplesOnly": false, // set to true if you want to only show examples with no method doc
+    "formatTypes": true, // defaults to true, set to false if you want to disable type formattings
+    "languages": { // override a specific language
       "javascript": {
         "method": ""
       }

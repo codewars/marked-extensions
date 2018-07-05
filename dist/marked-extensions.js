@@ -311,7 +311,8 @@ var STYLES = {
   },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp', 'solidity']
+    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp', 'solidity', 'haskell'],
+    kabob: ['clojure']
   }
 };
 
@@ -325,6 +326,9 @@ function replaceDocNames(language, pre, content) {
         switch (style) {
           case 'upper':
             return value.toUpperCase();
+
+          case 'kabob':
+            return value.replace(/_/g, '-');
 
           case 'camel':
             return camelCase(value);
