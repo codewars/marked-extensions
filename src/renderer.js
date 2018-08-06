@@ -1,6 +1,8 @@
 import { assignMissing } from './objects'
 import { processDocTokens } from './doc-tokens'
 import { methodDoc } from './method-doc';
+import { tableDoc } from './table-doc';
+
 
 
 export function buildRenderer(marked, options, result) {
@@ -85,9 +87,12 @@ function setupCode(options, result) {
       else if (language === '%method-doc') {
         return wrapInBlockDiv('docs method-doc', render(methodDoc(code, result.originalLanguage)));
       }
+      else if(language === '%table-doc') {
+        return wrapInBlockDiv('docs table-doc', tableDoc(code))
+     }
       else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
-      }
+      } 
 
       // make sure this is a language and not some random tag
       const foundLanguage = options.findLanguage(language.split(':')[0]);
