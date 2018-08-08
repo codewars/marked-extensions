@@ -33,11 +33,7 @@ export function tableDoc(code) {
 
 function tableData(json){
     let data = [];
-    json.forEach(function(elem, i, arr) {
-        data[i] = elem.map((a) => `<td>${a}</td>`);
-        data[i].unshift(`<tr>`);
-        data[i].push(`</tr>`);
-    });
+    json.map(elem => '<tr>' + elem.map(a => `<td>${a}</td>`).join('') + '</tr>').join('\n');
     return data.map((a) => a.join('')).join('\n');
 }
 
