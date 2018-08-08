@@ -199,7 +199,7 @@ function processExternalScripts(options, result) {
  * @param result
  */
 function processMeta(options, result) {
-  result.preprocessed = result.preprocessed.replace(/^---\r?\n(.*\r?\n)*\.{3}\s*(\r?\n){2}?/, meta => {
+  result.preprocessed = result.preprocessed.replace(/^---\r?\n(.*\r?\n)*\.{3}\s*(\r?\n){1,2}/, meta => {
     let yaml = meta.replace(/^---\r?\n/, '').replace(/\r?\n\.\.\. *\r?\n?/, '');
     result.meta = options.jsYaml.safeLoad(yaml);
     return '';
