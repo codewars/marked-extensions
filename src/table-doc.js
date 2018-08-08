@@ -31,23 +31,11 @@ export function tableDoc(code) {
     }
 }
 
-function tableData(json){
-    let data = [];
-    json.map(elem => '<tr>' + elem.map(a => `<td>${a}</td>`).join('') + '</tr>').join('\n');
-    return data.map((a) => a.join('')).join('\n');
+function tableData(json) {
+    return json.map(elem => '<tr>' + elem.map(a => `<td>${a}</td>`).join('') + '</tr>').join('\n');
 }
 
-function tableHeaders(json) {
-    const data = Object.keys(json).map(key => `<td>${key}</td>`);
-    const val = Object.values(json).map(key => `<td>${key}</td>`);
-    let arr = [];
-    for(var i=0; i < data.length; i++ ){
-        arr.push(`<tr>`);
-        arr.push(data[i]);
-        arr.push(val[i]);
-        arr.push(`</tr>`);
-    }
-    // const column1 = Object.keys(json).map(key => `<td>${key}</td>`);
-    // column1.push(Object.values(json).map((val) => `<td>${val}</td>`));
-    return arr.join('\n');
-}
+const tableHeaders = json =>
+  Object.keys(json)
+    .map(k => `<tr><td>${k}</td><td>${json[k]}</td></tr>`)
+    .join('\n');
