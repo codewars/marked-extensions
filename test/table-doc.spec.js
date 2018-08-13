@@ -9,5 +9,6 @@ describe('%table-doc', () => {
     expect(example).to.include('<td>id</td><td>INT</td>');
     expect(example).to.include('<td>title</td><td>VARCHAR(100)</td>');
     expect(example).to.include('<tr><td>email</td><td>VARCHAR(100)</td></tr>');
+
   });
 });

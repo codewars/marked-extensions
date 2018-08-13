@@ -22,6 +22,7 @@ export function tableDoc(code) {
 
         td.push(`</table>`);
         return td.join('\n');
+
     }
     catch (ex) {
         console.log(ex);
