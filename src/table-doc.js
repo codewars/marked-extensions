@@ -1,17 +1,25 @@
 export function tableDoc(code) {
   try {
     let json = JSON.parse(code);
-    const td = [];
+    const html = [];
 
-    td.push('<table>');
-    td.push('<tr><th>Name</th><th>Type</th></tr>');
-
-    if(json.columns){
-      td.push(tableHeaders(json.columns));
+    if (json.table) {
+      html.push(`<h3>${json.table}</h3>`);
     }
 
-    td.push('</table>');
-    return td.join('\n');
+    if (json.desc) {
+      html.push(`<p>${json.desc}</p>`);
+    }
+
+    html.push('<table>');
+    html.push('<tr><th>Name</th><th>Type</th></tr>');
+
+    if (json.columns){
+      html.push(tableHeaders(json.columns));
+    }
+
+    html.push('</table>');
+    return html.join('\n');
   }
   catch (ex) {
     return '`failed to render %jsonblock: `' + ex.message + '`';
