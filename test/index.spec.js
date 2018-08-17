@@ -66,7 +66,6 @@ describe('process', function() {
 
   describe('YAML/Meta', function() {
     const metaExample = process(marked, fixture('meta'), {jsYaml: yaml});
-
     it('should extract meta data', function() {
       expect(metaExample.meta.options.theme).to.equal('test');
     });
