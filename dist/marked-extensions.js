@@ -583,10 +583,11 @@ var markedExtensions = (function (exports) {
       }
 
       html.push('<table>');
-      html.push('<tr><th>Name</th><th>Type</th></tr>');
-
+      html.push('<thead><tr><th>Name</th><th>Type</th></tr></thead>');
       if (json.columns) {
+        html.push('<tbody>');
         html.push(tableHeaders(json.columns));
+        html.push('</tbody>');
       }
 
       html.push('</table>');
