@@ -580,7 +580,7 @@ function tableDoc(code) {
     }
 
     html.push('<table>');
-    html.push('<thead><tr><th>Name</th><th>Type</th></tr></thead>');
+    html.push('<thead><tr><th>Column</th><th>Type</th></tr></thead>');
     if (json.columns) {
       html.push('<tbody>');
       html.push(tableHeaders(json.columns));
