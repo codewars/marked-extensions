@@ -19,4 +19,9 @@ describe('%method-doc', () => {
     expect(example).to.not.include('>Examples</h4>');
     expect(example).to.include('openFiles');
   });
+
+  it('should treat asterisks as pointer in type', () => {
+    const example = process(marked, fixture('method-doc')).html();
+    expect(example).to.not.include('int</dfn> <em>');
+  })
 });

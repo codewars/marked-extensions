@@ -145,10 +145,15 @@ function returnType(json) {
 }
 
 function formatDocType(json, type, defaultValue) {
+
   if (json.formatTypes === false) {
     return `<dfn class="doc-type">${escapeHtml(type)}</dfn>`;
   }
   else {
+    if (type.includes(' *')) {
+      type = type.slice(0, type.indexOf('*')), + type.slice(type.indexOf('*') + 1);
+      return `@@docType:${type + ' pointer'}`
+    }
     return `@@docType:${type || defaultValue || 'null'}`
   }
 }

@@ -13,6 +13,10 @@ This is some text
     "ext": {
       "type": "String",
       "desc": "An optional extension that may be used as a filter to determine which files to open"
+    },
+    "int": {
+      "type": "int *",
+      "desc": "the data buffer, consisting entirely of lower-case characters; matches the regex `[a-z]*`"
     }
   },
   "constraints": [
