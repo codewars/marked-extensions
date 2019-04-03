@@ -566,6 +566,40 @@ function formatDocType(json, type, defaultValue) {
   }
 }
 
+function tableDoc(code) {
+  try {
+    var json = JSON.parse(code);
+    var html = [];
+
+    if (json.table) {
+      html.push('<h3>' + json.table + '</h3>');
+    }
+
+    if (json.desc) {
+      html.push('<p>' + json.desc + '</p>');
+    }
+
+    html.push('<table>');
+    html.push('<thead><tr><th>Column</th><th>Type</th></tr></thead>');
+    if (json.columns) {
+      html.push('<tbody>');
+      html.push(tableHeaders(json.columns));
+      html.push('</tbody>');
+    }
+
+    html.push('</table>');
+    return html.join('\n');
+  } catch (ex) {
+    return '`failed to render %jsonblock: `' + ex.message + '`';
+  }
+}
+
+var tableHeaders = function tableHeaders(json) {
+  return Object.keys(json).map(function (k) {
+    return '<tr><td>' + k + '</td><td>' + json[k] + '</td></tr>';
+  }).join('\n');
+};
+
 function buildRenderer(marked, options, result) {
   var renderer = result.renderer = new marked.Renderer();
 
@@ -643,6 +677,8 @@ function setupCode(options, result) {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       } else if (language === '%method-doc') {
         return wrapInBlockDiv('docs method-doc', render(methodDoc(code, result.originalLanguage)));
+      } else if (language === '%table-doc') {
+        return wrapInBlockDiv('docs table-doc', tableDoc(code));
       } else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
       }
@@ -855,7 +891,6 @@ var defaultOptions = {
   // if set to a function, will be called back after all external scripts have loaded
   onLoaded: null
 };
-
 var defaultLanguages = ['c', 'clojure', 'coffeescript', 'cpp', 'csharp', 'elixir', 'erlang', 'fsharp', 'go', 'groovy', 'haskell', 'java', 'javascript', 'kotlin', 'objc', 'ocaml', 'php', 'python', 'r', 'ruby', 'scala', 'shell', 'solidity', 'sql', 'swift', 'typescript'];
 
 /**
@@ -982,10 +1017,9 @@ function processExternalScripts(options, result) {
  * @param result
  */
 function processMeta(options, result) {
-  result.preprocessed = result.preprocessed.replace(/^---\n(.*\n)*\.\.\. *\n\n?/, function (meta) {
-    var yaml = meta.replace(/^---\n/, '').replace(/\n\.\.\. *\n?/, '');
+  result.preprocessed = result.preprocessed.replace(/^---\r?\n(.*\r?\n)*\.{3}\s*(\r?\n){2}?/, function (meta) {
+    var yaml = meta.replace(/^---\r?\n/, '').replace(/\r?\n\.\.\. *\r?\n?/, '');
     result.meta = options.jsYaml.safeLoad(yaml);
-
     return '';
   });
 }

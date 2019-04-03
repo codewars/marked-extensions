@@ -1,40 +1,33 @@
-import { escapeHTML } from './strings';
-
 export function tableDoc(code) {
-    try {
-        let json = JSON.parse(code);
-        // support language specific overrides
-        // if (json.languages && json.langauges[language]) {
-        //     Object.assign(json, json.languages[language]);
-        // }
-        
-        const td = [];
+  try {
+    let json = JSON.parse(code);
+    const html = [];
 
-        td.push(`<table>`);
-        td.push(`<tr><th>Name</th><th>Type</th></tr>`);
-        
-        if(json.columns){
-            td.push(tableHeaders(json.columns));
-        }
-        // if(json.example){
-        //     td.push(tableData(json.data));
-        // }
-
-        td.push(`</table>`);
-        return td.join('\n');
-
+    if (json.table) {
+      html.push(`<h3>${json.table}</h3>`);
     }
-    catch (ex) {
-        console.log(ex);
-        return '`failed to render %jsonblock: `' + ex.message + '`';
-    }
-}
 
-function tableData(json) {
-    return json.map(elem => '<tr>' + elem.map(a => `<td>${a}</td>`).join('') + '</tr>').join('\n');
+    if (json.desc) {
+      html.push(`<p>${json.desc}</p>`);
+    }
+
+    html.push('<table>');
+    html.push('<thead><tr><th>Column</th><th>Type</th></tr></thead>');
+    if (json.columns){
+      html.push('<tbody>');
+      html.push(tableHeaders(json.columns));
+      html.push('</tbody>');
+    }
+
+    html.push('</table>');
+    return html.join('\n');
+  }
+  catch (ex) {
+    return '`failed to render %jsonblock: `' + ex.message + '`';
+  }
 }
 
 const tableHeaders = json =>
   Object.keys(json)
-    .map(k => `<tr><td>${k}</td><td>${json[k]}</td></tr>`)
-    .join('\n');
+  .map(k => `<tr><td>${k}</td><td>${json[k]}</td></tr>`)
+  .join('\n');

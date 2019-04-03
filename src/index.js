@@ -199,10 +199,9 @@ function processExternalScripts(options, result) {
  * @param result
  */
 function processMeta(options, result) {
-  result.preprocessed = result.preprocessed.replace(/^---\n(.*\n)*\.\.\. *\n\n?/, meta => {
-    const yaml = meta.replace(/^---\n/, '').replace(/\n\.\.\. *\n?/, '');
+  result.preprocessed = result.preprocessed.replace(/^---\r?\n(.*\r?\n)*\.{3}\s*(\r?\n){2}?/, meta => {
+    let yaml = meta.replace(/^---\r?\n/, '').replace(/\r?\n\.\.\. *\r?\n?/, '');
     result.meta = options.jsYaml.safeLoad(yaml);
-
     return '';
   });
 }
