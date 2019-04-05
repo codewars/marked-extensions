@@ -18,5 +18,7 @@ describe('%method-doc', () => {
     const example = process(marked, fixture('method-doc-invalid')).html();
     expect(example).to.not.include('>Examples</h4>');
     expect(example).to.include('openFiles');
+    expect(example).to.include('<table>');
   });
+
 });

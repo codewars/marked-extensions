@@ -84,7 +84,7 @@ function exampleHeader(json) {
   const line1 = [];
   const line2 = [];
   if (hasExampleNames(json)){
-    line1.push('');
+    line1.push('|');
     line2.push('');
   }
 
