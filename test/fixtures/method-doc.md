@@ -13,6 +13,10 @@ This is some text
     "ext": {
       "type": "String",
       "desc": "An optional extension that may be used as a filter to determine which files to open"
+    },
+    "num": {
+    	"type": "int *",
+        "desc": "Test to ensure * isn't treated as markdown `[a-z]*`"
     }
   },
   "constraints": [
@@ -25,11 +29,11 @@ This is some text
   "examples": [
     {
       "name": "Example A",
-      "args": [[1,2,3], "js"],
+      "args": [[1,2,3], "js", 1],
       "returns": [1,2]
     },
     {
-      "args": [[1,2,3], "rb"],
+      "args": [[1,2,3], "rb", 1],
       "returns": [3]
     }
   ]
