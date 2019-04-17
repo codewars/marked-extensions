@@ -11,7 +11,8 @@ describe('%method-doc', () => {
     expect(example).to.include('<code><dfn class="doc-class">');
     expect(example).to.include('- A filtered array of files that were opened</p>');
     expect(example).to.include('<td><code>[1,2,3]</code></td>');
-    expect(example).to.include('<td><code>&quot;js&quot;</code></td>');
+    expect(example).to.include('<td><code>"js"</code></td>');
+    expect(example).to.include('<table>')
   });
 
   it('should render json as formatted markdown', () => {
