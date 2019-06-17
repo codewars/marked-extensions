@@ -1,10 +1,11 @@
-import { camelCase } from '../strings'
+import { camelCase, dollarCamelCase } from '../strings';
 
 export const STYLES = {
   Const: {
     upper: ['default']
   },
   Method: {
+    camel: ['php'],
     upperCamel: ['csharp']
   },
   Prop: {
@@ -15,7 +16,8 @@ export const STYLES = {
   },
   // name acts as default
   Name: {
-    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'php', 'swift', 'csharp', 'solidity', 'haskell'],
+    camel: ['javascript', 'java', 'coffeescript', 'typescript', 'go', 'kotlin', 'scala', 'objc', 'swift', 'csharp', 'solidity', 'haskell'],
+    dollarCamel: ['php'],
     kabob: ['clojure'],
   }
 }
@@ -36,6 +38,9 @@ export function replaceDocNames (language, pre, content) {
 
           case 'camel':
             return camelCase(value);
+
+          case 'dollarCamel':
+            return "$" + camelCase(value);
 
           case 'upperCamel':
             return camelCase(value, true);
