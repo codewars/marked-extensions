@@ -15,6 +15,16 @@ describe ('doc names', function() {
       expect(expected).to.include('testFoo');
       expect(expected).to.not.include('@@docName');
     });
+
+    describe ('conversions', function() {
+      check('javascript', 'Name', 'fooBar');
+      check('ruby', 'Name', 'foo_bar');
+      check('python', 'Name', 'foo_bar');
+      check('csharp', 'Name', 'fooBar');
+      check('java', 'Name', 'fooBar');
+      check('swift', 'Name', 'fooBar');
+      check('php', 'Name', '$fooBar');
+    });
   });
 
   describe ('@@docParam', function() {
@@ -31,6 +41,7 @@ describe ('doc names', function() {
       check('csharp', 'Param', 'fooBar');
       check('java', 'Param', 'fooBar');
       check('swift', 'Param', 'fooBar');
+      check('php', 'Param', '$fooBar');
     });
   });
 
@@ -50,6 +61,7 @@ describe ('doc names', function() {
       check('swift', 'Method', 'fooBar');
       check('haskell', 'Method', 'fooBar');
       check('clojure', 'Method', 'foo-bar');
+      check('php', 'Method', 'fooBar');
     });
   });
 });
