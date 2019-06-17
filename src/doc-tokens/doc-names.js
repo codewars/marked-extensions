@@ -1,4 +1,4 @@
-import { camelCase, dollarCamelCase } from '../strings';
+import { camelCase } from '../strings';
 
 export const STYLES = {
   Const: {
