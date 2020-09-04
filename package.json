@@ -26,7 +26,7 @@
     "jest-environment-jsdom": "^23.2.0",
     "js-yaml": "^3.10.0",
     "jsdom": "^11.3.0",
-    "marked": "^0.6.2",
+    "marked": "^0.7.0",
     "parcel-bundler": "^1.12.3",
     "rollup": "^0.36.0",
     "rollup-plugin-babel": "^2.6.1",
