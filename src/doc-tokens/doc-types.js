@@ -44,12 +44,12 @@ const TYPES = {
   array: {
     List: ['java'],
     'NSArray*': ['objc'],
-    'std::list': ['cpp'],
+    'std::vector': ['cpp'],
     default: 'Array'
   },
   list: {
     List: ['java', 'csharp', 'scala', 'groovy', 'kotlin'],
-    'std::list': ['cpp'],
+    'std::vector': ['cpp'],
     default: 'Array'
   },
   string: {
