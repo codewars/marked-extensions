@@ -42,7 +42,7 @@ describe ('doc-types', function() {
         check('python', 'Array (of Strings)');
         check('csharp', 'string[]');
         check('java', 'String[]');
-        check('cpp', 'std::list<std::string>');
+        check('cpp', 'std::vector<std::string>');
       });
     });
 
