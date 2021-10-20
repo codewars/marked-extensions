@@ -3,8 +3,6 @@ import { processDocTokens } from './doc-tokens'
 import { methodDoc } from './method-doc';
 import { tableDoc } from './table-doc';
 
-
-
 export function buildRenderer(marked, options, result) {
   const renderer = result.renderer = new marked.Renderer();
 
@@ -75,11 +73,8 @@ function setupCode(options, result) {
       else if (language.match(/^if-not:/)) {
         return matchIfBlockLanguage(result, language) ? '' : render(code);
       }
-      else if (language.match(/^tab:/)) {
-        return handleTab(result, code, language);
-      }
       else if (result.extensions.indexOf(language) >= 0) {
-        return handleExtension(options, result, code, language);
+        return handleExtension(options, code, language);
       }
       else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
@@ -87,48 +82,26 @@ function setupCode(options, result) {
       else if (language === '%method-doc') {
         return wrapInBlockDiv('docs method-doc', render(methodDoc(code, result.originalLanguage)));
       }
-      else if(language === '%table-doc') {
+      else if (language === '%table-doc') {
         return wrapInBlockDiv('docs table-doc', tableDoc(code))
-     }
-      else if (language[0] === '%') {
+      }
+      else if (language[ 0 ] === '%') {
         return wrapInBlockDiv(language, result.render(code));
-      } 
+      }
 
-      // make sure this is a language and not some random tag
-      const foundLanguage = options.findLanguage(language.split(':')[0]);
+      // at this point just assume that whatever is left is a language that needs to be formatted
+      const codeLanguage = language.split(':')[0]
 
-      if (foundLanguage) {
+      if (codeLanguage) {
         // if filtering is enabled and this is not the active language then filter it out
-        if (options.filterLanguages && foundLanguage !== result.language && result.language) {
+        if (options.filterLanguages && codeLanguage !== result.language && result.language) {
           return '';
         }
-
-        // if CodeMirror is provided then highlight using that instead
-        if (options.cm) {
-          return highlightCM(options, code, foundLanguage, language);
-        }
-      }
-      // process line numbers, if they are set (i.e. ruby:10) in a naive simple way
-      else if (options.lineNumbers) {
-        code = lineNumbers(code, language);
       }
     }
 
     return wrapLanguage(options, _code.call(result.renderer, code, language), language);
   }
-}
-
-function lineNumbers(code, language, wrapper = '@@ ') {
-  let lineNumber = getLineNumber(language);
-
-  // if there are line numbers, then add them now starting at the start index
-  if (lineNumber > 0) {
-    code = code.split('\n').map(line => {
-      return `${wrapper.replace('@@', lineNumber++)}${line}`
-    }).join('\n');
-  }
-
-  return code;
 }
 
 function wrapLanguage(options, code, language) {
@@ -145,38 +118,12 @@ function wrapLanguage(options, code, language) {
   return code;
 }
 
-function highlightCM(options, code, language, raw) {
-  const el = window.document.createElement('div');
-  options.cm.runMode(code, options.findMode(language), el);
-
-  let codeHtml = el.innerHTML;
-  if (options.lineNumbers) {
-    codeHtml = lineNumbers(codeHtml, raw, '<span class="cm-line-number">@@</span>');
-  }
-
-  const result = `<pre class="cm-runmode cm-s-${options.theme}"><code>${codeHtml}</code></pre>`;
-  return wrapLanguage(options, result, language);
-}
-
-function getLineNumber(language) {
-  const parts = language.split(':');
-  return parts.length > 1 ? parseInt(parts[1], 10) : null;
-}
-
 function wrapInBlockDiv(type, contents) {
   return `<div class="block block--${type.replace(/^%/, '')}">${contents}</div>`;
 }
 
 function matchIfBlockLanguage(result, language) {
   return language.replace(/^if(-not)?: ?/, '').split(',').indexOf(result.originalLanguage) >= 0;
-}
-
-function handleTab(result, code, language) {
-  // parts should be up to tab:LABEL with language being optional
-  const parts = language.split(':');
-  let label = parts[1].replace(/\+/g, ' ');
-  result.tabs[label] = `${result.render(code)}`;
-  return '';
 }
 
 /**
@@ -186,7 +133,7 @@ function handleTab(result, code, language) {
  * @param code
  * @param language
  */
-function handleExtension(options, result, code, language) {
+function handleExtension(options, code, language) {
   const ext = options.extensions[language]
 
   if (typeof ext.code === 'function') {
