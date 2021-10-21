@@ -1,0 +1,52 @@
+# Release when `chore: update version` is merged
+name: Release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  merged-pr:
+    runs-on: ubuntu-latest
+    outputs:
+      pr: ${{ steps.get-pr-info.outputs.result }}
+    steps:
+      - name: Get merged PR
+        id: get-pr-info
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const res = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sort: 'updated',
+              direction: 'desc',
+              state: 'closed',
+              per_page: 100,
+            });
+            const pull = res.data.find(p => p.merge_commit_sha === context.sha);
+            if (!pull) {
+              console.log("No PR");
+              return {};
+            }
+
+            console.log(`Found #${pull.number} ${pull.title}`);
+            return {
+              title: pull.title,
+              body: pull.body,
+              number: pull.number,
+            };
+
+  release:
+    needs: merged-pr
+    if: "${{ fromJSON(needs.merged-pr.outputs.pr).title == 'chore: update version' }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "npm"
+      - run: npm ci
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}

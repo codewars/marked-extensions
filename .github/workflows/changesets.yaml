@@ -1,0 +1,29 @@
+# Automatically open/update release PR
+name: Changesets
+on:
+  push:
+    branches:
+      - master
+env:
+  CI: true
+jobs:
+  version:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "npm"
+      - run: npm ci
+      - name: create versions
+        uses: changesets/action@master
+        with:
+          version: "npm run changeset-version"
+          commit: "chore: update version"
+          title: "chore: update version"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
