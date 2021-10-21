@@ -5,9 +5,6 @@ import { expect } from 'chai'
 import { fixture } from './test-utils'
 import { escapeHtml } from '../src/strings'
 
-const CodeMirror = require('codemirror/lib/codemirror');
-require('codemirror/addon/runmode/runmode.js');
-
 describe('process', function() {
 
   const basicExample = process(marked, fixture('basic'));
@@ -68,46 +65,6 @@ describe('process', function() {
     const metaExample = process(marked, fixture('meta'), {jsYaml: yaml});
     it('should extract meta data', function() {
       expect(metaExample.meta.options.theme).to.equal('test');
-    });
-  });
-
-  describe('CodeMirror', function() {
-    const cmBasicExample = process(marked, fixture('basic'), {cm: CodeMirror});
-
-    // const cmNoNumberedExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbers: false});
-    // const cmNumberedNoGutterExample = process(marked, fixture('numbered'), {cm: CodeMirror, lineNumbersGutter: true});
-
-    it('should return a valid object', function() {
-      expect(cmBasicExample).to.be.an('object');
-    });
-
-    it('should include theme within content', function() {
-      expect(cmBasicExample.html()).to.include('neo');
-    });
-
-    // CM is not behaving within mocha/jsdom so we are skipping for now
-    it.skip ('should include highlighted cm spans', function() {
-      expect(cmBasicExample.html()).to.include('cm-variable');
-    });
-
-    describe('line numbers', function() {
-      it('should include line number wrapper when CM used', function() {
-        const example = process(marked, fixture('numbered'), {lineNumbers: true, cm: CodeMirror});
-        expect(example.html()).to.include('<span class="cm-line-number">9</span>');
-      });
-    });
-
-    it('should load language files', function() {
-      const loaded = [];
-      const load = url => {
-        loaded.push(url);
-        return Promise.resolve();
-      };
-
-      const example = process(marked, fixture('basic'), {cm: CodeMirror, loadScript: load});
-
-      expect(loaded.length).to.equal(1);
-      expect(loaded[0]).to.contain('mode/javascript/javascript.min.js');
     });
   });
 
@@ -174,26 +131,21 @@ describe('process', function() {
     });
   });
 
-  describe('mermaid', function() {
+  describe('extensions', function() {
+    const extensions = {
+      mermaid: {
+        code: code => `<div class="mermaid">${ code }</div>`
+      }
+    }
+
     it('should add html wrapper', function() {
-      let example = process(marked, fixture('mermaid'), {language: 'javascript'});
+      let example = process(marked, fixture('extensions'), { extensions });
       expect(example.html()).to.include('<div class="mermaid">');
     });
 
     it('should detect as an extension', function() {
-      let example = process(marked, fixture('mermaid'), {language: 'javascript'});
+      let example = process(marked, fixture('extensions'), { extensions });
       expect(example.extensions[0]).to.equal('mermaid');
-    });
-
-    it('should load script if loader is provided', function() {
-      const loaded = [];
-      const load = url => {
-        loaded.push(url);
-        return Promise.resolve();
-      };
-      let example = process(marked, fixture('mermaid'), {language: 'javascript', loadScript: load});
-      expect(loaded.length).to.equal(1);
-      expect(loaded[0]).to.contain('mermaid');
     });
   });
 

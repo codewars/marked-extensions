@@ -5,26 +5,21 @@ import { processDocTokens } from './doc-tokens'
 export const defaultOptions = {
   // these are the options passed to marked directly
   marked: {},
-  // languages that should be treated as extensions. You can configure how each gets handled
-  extensions: {
-    mermaid: {
-      // code handler
-      code: code => `<div class="mermaid">${code}</div>`,
-      // will lazy load script automatically
-      src: 'https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js',
-      afterRender: () => window.mermaid && window.mermaid.init()
-    },
-  },
-  // set to a method that that will receive a language and return the mapped
-  // name. if no name is returned, it is assumed that the language is an extension.
-  // The default method only handles a default set of languages.
-  findLanguage: (language) => defaultLanguages.indexOf(language) >= 0 ? language: null,
-
-  // used with CodeMirror.runMode, used to find the mode of the language. By default will just return the language
-  findMode: (language) => language,
-
-  // The highlight theme to add, only used with cm runMode
-  theme: 'neo',
+  /**
+   *  block extensions can be configured here.
+   *  i.e. ```%mermaid block could be configured as
+   *   extensions: {
+   *      mermaid: {
+   *        code (code, options) {
+   *          // transform code
+   *        },
+   *        afterRender () {
+   *          // called after the markdown has rendered
+   *        }
+   *      }
+   *   }
+   */
+  extensions: {},
 
   // you can set icons within headers using icon::ICONNAME, this setting determines the icon class prefix used
   iconClassPrefix: 'icon-',
@@ -43,44 +38,12 @@ export const defaultOptions = {
   // setting will default the language to the first one found within the markdown.
   defaultLanguageToFirst: true,
 
-  // true if line numbers should be added to highlighted code (if a starting line number is configured for the block)
-  lineNumbers: true,
-
-  // css class used to display a line number gutter, which can be used to try to create an opacity layer
-  // which will style the cm-number values differently. Set to null to disable adding a gutter.
-  lineNumbersGutter: 'cm-runmode-linenumbers-gutter',
-
   // true if doc tokens should be parsed
   docTokens: true,
 
   // if set to an instance of js-yaml, it will process meta data at the top of the markdown.
   jsYaml: null,
-
-  // If set to CodeMirror class, it will use CodeMirror.runMode to process syntax highlighting
-  // Note: make sure to import codemirror/addon/runmode/runmode.js first.
-  cm: null,
-
-  // set to automatically load a CM language. This is provided by default but you can override if you wish
-  // to override. This option is only used if both cm and loadScript are set.
-  // You can set this to null if you do not wish or need to load languages dynamically
-  loadCMLanguage: (language, options) => {
-    return options.loadScript(`//cdnjs.cloudflare.com/ajax/libs/codemirror/${options.cm.version}/mode/${language}/${language}.min.js`);
-  },
-
-  // If you wish to support loading external extension scripts, you should set this to a
-  // function that takes a url and returns a promise. Note that this function will need to be responsible
-  // for not reloading the same scripts if requested more than once, this library does not take care of caching.
-  loadScript: null,
-
-  // if set to a function, will be called back after all external scripts have loaded
-  onLoaded: null
 };
-
-export const defaultLanguages = [
-  'c', 'clojure', 'coffeescript', 'cpp', 'csharp', 'elixir', 'erlang', 'fsharp',
-  'go', 'groovy', 'haskell', 'java', 'javascript', 'kotlin', 'objc', 'ocaml', 'php', 'python',
-  'r', 'ruby', 'scala', 'shell', 'solidity', 'sql', 'swift', 'typescript'
-]
 
 /**
  * Processes the markdown using marked along with the many extensions this library provides
@@ -123,10 +86,6 @@ export function process(marked, markdown, options = {}) {
   ['languages', 'extensions', 'icons']
     .forEach(key => result[key] = Object.keys(result[key]));
 
-  if (options.loadScript) {
-    processExternalScripts(options, result);
-  }
-
   return result;
 }
 
@@ -156,41 +115,6 @@ function afterRenderFn(options, result) {
       }
     });
   }
-}
-
-/**
- * Will loop through extensions and languages and try to dynamically load scripts.
- * @param options
- * @param result
- */
-function processExternalScripts(options, result) {
-  const promises = [];
-  result.extensions.forEach(ext => {
-    const config = options.extensions[ext];
-    if (config && config.src) {
-      promises.push(options.loadScript(config.src));
-    }
-  });
-
-  // automatically load the CM language that is shown
-  if (options.cm && options.loadCMLanguage) {
-    // if we filter languages then we only need to load the one being shown
-    if (options.filterLanguages && result.language) {
-      promises.push(options.loadCMLanguage(result.language, options));
-    }
-    // otherwise we need to load them all
-    else if (!options.filterLanguages && result.languages.length) {
-      result.languages.forEach(language => {
-        promises.push(options.loadCMLanguage(language, options));
-      });
-    }
-  }
-
-  Promise.all(promises).then(() => {
-    if (options.onLoaded) {
-      options.onLoaded(result);
-    }
-  });
 }
 
 /**
@@ -241,10 +165,7 @@ function processBlocks(options, result) {
             result.extensions[name] = true;
           }
           else {
-            const language = options.findLanguage(name);
-            if (language) {
-              result.languages[language] = true;
-            }
+            result.languages[name] = true;
           }
         }
       })
