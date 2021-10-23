@@ -12,38 +12,7 @@ export function buildRenderer(marked, options, result) {
   // provide the render method, this will also be used later to render nested blocks
   result.render = (md) => marked(md, markedOptions);
 
-  setupHeader(renderer, options, result);
   setupCode(options, result);
-}
-
-/**
- *
- * @param renderer
- */
-function setupHeader(renderer, options, result) {
-  // heading extensions
-  renderer.heading = function (text, level) {
-    // you can set icons via icon::name
-    const icon = text.match(/icon::([a-z-]*)/);
-    let attributes = '';
-    if (icon) {
-      // indicate that this icon has been used
-      result.icons[icon[1]] = true;
-
-      attributes = ` class="${options.iconClassPrefix}${icon[1]}"`;
-      text = text.replace(/icon::[a-z-]*/, '');
-    }
-
-    // we track headers 1 - 4 and add ids to them so that we can link to them later if we want to
-    if (level < 5) {
-      const header = result.headers[`h${level}`];
-      const index = header.length;
-      attributes += ` id="h${level}_${index}"`;
-      header.push(text);
-    }
-
-    return `<h${level}${attributes}>${text}</h${level}>`;
-  };
 }
 
 /**

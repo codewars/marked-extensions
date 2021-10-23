@@ -14,23 +14,16 @@ describe('process', function () {
         .to.be.an('object')
         .and.to.have.all.keys(
           'raw',
-          'icons',
           'languages',
           'language',
           'originalLanguage',
           'extensions',
           'renderer',
-          'headers',
           'preprocessed',
           'html',
           'render',
           'afterRender'
         );
-    });
-
-    it('should count h1s', function () {
-      basicExample.html();
-      expect(basicExample.headers.h1.length).to.equal(1);
     });
 
     it('should escape scripts in backticks', function () {

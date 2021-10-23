@@ -21,9 +21,6 @@ export const defaultOptions = {
    */
   extensions: {},
 
-  // you can set icons within headers using icon::ICONNAME, this setting determines the icon class prefix used
-  iconClassPrefix: 'icon-',
-
   // set to a value that should wrap standard languages. Use "{slot}" to indicate where the code should be inserted: i.e.
   // '<div class="tab">{code}</div>'. Can also be a function which takes (code, language) as its parameters.
   languageWrapper: null,
@@ -50,7 +47,7 @@ export const defaultOptions = {
  * @param marked The marked library, must be passed in since it is not included within this library as a dependency
  * @param markdown The markdown to process
  * @param options The extended set of options, as well as marked options. See defaultOptions for more details.
- * @returns {{originalLanguage, language, languages: [], extensions: [], headers: {h1: Array, h2: Array, h3: Array, h4: Array}, icons: [], raw: *, preprocessed: *}}
+ * @returns {{originalLanguage, language, languages: [], extensions: [], raw: *, preprocessed: *}}
  */
 export function process(marked, markdown, options = {}) {
   assignMissing(options, defaultOptions);
@@ -60,8 +57,6 @@ export function process(marked, markdown, options = {}) {
     language: options.language,
     languages: {},
     extensions: {},
-    headers: { h1: [], h2: [], h3: [], h4: [] },
-    icons: {},
     raw: markdown,
     preprocessed: markdown,
   };
@@ -82,7 +77,7 @@ export function process(marked, markdown, options = {}) {
   result.afterRender = afterRenderFn(options, result);
 
   // convert objects which have been acting as basic sets to an array
-  ['languages', 'extensions', 'icons'].forEach((key) => (result[key] = Object.keys(result[key])));
+  ['languages', 'extensions'].forEach((key) => (result[key] = Object.keys(result[key])));
 
   return result;
 }
