@@ -1,7 +1,7 @@
-import fs from 'fs'
-import { cwd } from 'process'
+import fs from 'fs';
+import { cwd } from 'process';
 
-const markdown = {}
+const markdown = {};
 
 export function fixture(name) {
   if (markdown[name]) {
@@ -9,5 +9,5 @@ export function fixture(name) {
   }
 
   let file = `${cwd()}/test/fixtures/${name}.md`;
-  return markdown[name] = fs.readFileSync(file, 'utf8');
+  return (markdown[name] = fs.readFileSync(file, 'utf8'));
 }

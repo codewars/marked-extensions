@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { replaceDocTypes } from '../../src/doc-tokens/doc-types'
-import { unescapeHtml } from '../../src/strings'
+import { replaceDocTypes } from '../../src/doc-tokens/doc-types';
+import { unescapeHtml } from '../../src/strings';
 
 let _content = null;
 function content(value) {
@@ -12,14 +12,14 @@ function content(value) {
 }
 
 function check(language, expected) {
-  it (`${language}: ${expected}`, function() {
+  it(`${language}: ${expected}`, function () {
     const actual = unescapeHtml(replaceDocTypes(language, false, content()));
     expect(actual).to.include(`<dfn class="doc-type">${expected}</dfn>`);
   });
 }
 
-describe ('doc-types', function() {
-  describe ('types', function() {
+describe('doc-types', function () {
+  describe('types', function () {
     describe('Arrays', function () {
       describe('Integers', function () {
         beforeEach(() => content('Array<Integer>'));
@@ -191,25 +191,33 @@ describe ('doc-types', function() {
     });
   });
 
-  describe ('parsing', function() {
+  describe('parsing', function () {
     describe('when nested inside of code', function () {
-      it ('should handle doc types within ``', function() {
-        let example = unescapeHtml(replaceDocTypes('javascript', false, '`@@docType:Array<String>`'));
+      it('should handle doc types within ``', function () {
+        let example = unescapeHtml(
+          replaceDocTypes('javascript', false, '`@@docType:Array<String>`')
+        );
         expect(example).to.equal('`Array<String>`');
       });
 
-      it ('should handle doc types within <p><code>@@docType:Array<String></code></p>', function() {
-        let example = unescapeHtml(replaceDocTypes('javascript', false, '<p><code>@@docType:Array<String></code></p>'));
+      it('should handle doc types within <p><code>@@docType:Array<String></code></p>', function () {
+        let example = unescapeHtml(
+          replaceDocTypes('javascript', false, '<p><code>@@docType:Array<String></code></p>')
+        );
         expect(example).to.equal('<p><code>Array<String></code></p>');
       });
 
-      it ('should handle doc types without closing tag <code>@@docType:Array<String>', function() {
-        let example = unescapeHtml(replaceDocTypes('javascript', false, '<code>@@docType:Array<String>'));
+      it('should handle doc types without closing tag <code>@@docType:Array<String>', function () {
+        let example = unescapeHtml(
+          replaceDocTypes('javascript', false, '<code>@@docType:Array<String>')
+        );
         expect(example).to.equal('<code>Array<String>');
       });
 
-      it ('should handle doc types without ``', function() {
-        let example = unescapeHtml(replaceDocTypes('javascript', false, 'test @@docType:Array<String> test'));
+      it('should handle doc types without ``', function () {
+        let example = unescapeHtml(
+          replaceDocTypes('javascript', false, 'test @@docType:Array<String> test')
+        );
         expect(example).to.equal('test <dfn class="doc-type">Array<String></dfn> test');
       });
     });

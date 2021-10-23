@@ -1,6 +1,6 @@
-import { replaceDocTypes } from './doc-types'
-import { replaceDocNames } from './doc-names'
-import { replaceDocGlobals } from './doc-globals'
+import { replaceDocTypes } from './doc-types';
+import { replaceDocNames } from './doc-names';
+import { replaceDocGlobals } from './doc-globals';
 
 /**
  * Preprocesses the markdown before sending it through marked. This is used to process

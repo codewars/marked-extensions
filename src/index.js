@@ -1,6 +1,6 @@
-import { assignMissing } from './objects'
-import { buildRenderer } from './renderer'
-import { processDocTokens } from './doc-tokens'
+import { assignMissing } from './objects';
+import { buildRenderer } from './renderer';
+import { processDocTokens } from './doc-tokens';
 
 export const defaultOptions = {
   // these are the options passed to marked directly
@@ -61,10 +61,10 @@ export function process(marked, markdown, options = {}) {
     languages: {},
     extensions: {},
     tabs: {},
-    headers: {h1: [], h2: [], h3: [], h4: []},
+    headers: { h1: [], h2: [], h3: [], h4: [] },
     icons: {},
     raw: markdown,
-    preprocessed: markdown
+    preprocessed: markdown,
   };
 
   if (options.jsYaml) {
@@ -83,8 +83,7 @@ export function process(marked, markdown, options = {}) {
   result.afterRender = afterRenderFn(options, result);
 
   // convert objects which have been acting as basic sets to an array
-  ['languages', 'extensions', 'icons']
-    .forEach(key => result[key] = Object.keys(result[key]));
+  ['languages', 'extensions', 'icons'].forEach((key) => (result[key] = Object.keys(result[key])));
 
   return result;
 }
@@ -107,14 +106,14 @@ function render(options, result) {
  * @returns {Function}
  */
 function afterRenderFn(options, result) {
-  return function() {
-    result.extensions.forEach(ext => {
+  return () => {
+    result.extensions.forEach((ext) => {
       const config = options.extensions[ext];
       if (config && config.afterRender) {
         config.afterRender.apply(result, arguments);
       }
     });
-  }
+  };
 }
 
 /**
@@ -123,11 +122,14 @@ function afterRenderFn(options, result) {
  * @param result
  */
 function processMeta(options, result) {
-  result.preprocessed = result.preprocessed.replace(/^---\r?\n(.*\r?\n)*\.{3}\s*(\r?\n){2}?/, meta => {
-    let yaml = meta.replace(/^---\r?\n/, '').replace(/\r?\n\.\.\. *\r?\n?/, '');
-    result.meta = options.jsYaml.safeLoad(yaml);
-    return '';
-  });
+  result.preprocessed = result.preprocessed.replace(
+    /^---\r?\n(.*\r?\n)*\.{3}\s*(\r?\n){2}?/,
+    (meta) => {
+      let yaml = meta.replace(/^---\r?\n/, '').replace(/\r?\n\.\.\. *\r?\n?/, '');
+      result.meta = options.jsYaml.safeLoad(yaml);
+      return '';
+    }
+  );
 }
 
 /**
@@ -150,25 +152,24 @@ function processLanguage(result) {
  */
 function processBlocks(options, result) {
   let blocks = result.preprocessed.match(/^(```|~~~) ?(.*) *$/gm) || [];
-  blocks = blocks.map(m => m.replace(/(```|~~~) ?/g, ''));
+  blocks = blocks.map((m) => m.replace(/(```|~~~) ?/g, ''));
 
   // loop through each block and track which are languages and which are extensions
   blocks.forEach((text) => {
     if (text) {
       text = text.replace(/^if(-not)?: ?/, '').split(':')[0];
 
-      text.split(',').forEach(name => {
+      text.split(',').forEach((name) => {
         // % is a special token, we know these aren't either languages or extensions
         if (name.indexOf('%') === -1) {
           // if an extension has been defined for the language, track it now
           if (options.extensions[name]) {
             result.extensions[name] = true;
-          }
-          else {
+          } else {
             result.languages[name] = true;
           }
         }
-      })
+      });
     }
   });
 }

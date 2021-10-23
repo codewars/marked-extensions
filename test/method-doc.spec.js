@@ -1,7 +1,7 @@
 import { process } from '../src/index';
-import marked from 'marked'
-import { expect } from 'chai'
-import { fixture } from './test-utils'
+import marked from 'marked';
+import { expect } from 'chai';
+import { fixture } from './test-utils';
 
 describe('%method-doc', () => {
   it('should render json as formatted markdown', () => {
@@ -20,5 +20,4 @@ describe('%method-doc', () => {
     expect(example).to.not.include('>Examples</h4>');
     expect(example).to.include('openFiles');
   });
-
 });

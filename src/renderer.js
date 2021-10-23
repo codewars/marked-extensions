@@ -1,10 +1,10 @@
-import { assignMissing } from './objects'
-import { processDocTokens } from './doc-tokens'
+import { assignMissing } from './objects';
+import { processDocTokens } from './doc-tokens';
 import { methodDoc } from './method-doc';
 import { tableDoc } from './table-doc';
 
 export function buildRenderer(marked, options, result) {
-  const renderer = result.renderer = new marked.Renderer();
+  const renderer = (result.renderer = new marked.Renderer());
 
   const markedOptions = { renderer };
   assignMissing(markedOptions, options.marked || {});
@@ -43,7 +43,7 @@ function setupHeader(renderer, options, result) {
     }
 
     return `<h${level}${attributes}>${text}</h${level}>`;
-  }
+  };
 }
 
 /**
@@ -62,35 +62,28 @@ function setupCode(options, result) {
     }
 
     return result.render(code);
-  }
+  };
 
-
-  result.renderer.code = function(code, language) {
+  result.renderer.code = function (code, language) {
     if (language) {
       if (language.match(/^if:/)) {
         return matchIfBlockLanguage(result, language) ? render(code) : '';
-      }
-      else if (language.match(/^if-not:/)) {
+      } else if (language.match(/^if-not:/)) {
         return matchIfBlockLanguage(result, language) ? '' : render(code);
-      }
-      else if (result.extensions.indexOf(language) >= 0) {
+      } else if (result.extensions.indexOf(language) >= 0) {
         return handleExtension(options, code, language);
-      }
-      else if (language === '%definitions' || language === '%doc') {
+      } else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
-      }
-      else if (language === '%method-doc') {
+      } else if (language === '%method-doc') {
         return wrapInBlockDiv('docs method-doc', render(methodDoc(code, result.originalLanguage)));
-      }
-      else if (language === '%table-doc') {
-        return wrapInBlockDiv('docs table-doc', tableDoc(code))
-      }
-      else if (language[ 0 ] === '%') {
+      } else if (language === '%table-doc') {
+        return wrapInBlockDiv('docs table-doc', tableDoc(code));
+      } else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
       }
 
       // at this point just assume that whatever is left is a language that needs to be formatted
-      const codeLanguage = language.split(':')[0]
+      const codeLanguage = language.split(':')[0];
 
       if (codeLanguage) {
         // if filtering is enabled and this is not the active language then filter it out
@@ -101,7 +94,7 @@ function setupCode(options, result) {
     }
 
     return wrapLanguage(options, _code.call(result.renderer, code, language), language);
-  }
+  };
 }
 
 function wrapLanguage(options, code, language) {
@@ -109,8 +102,7 @@ function wrapLanguage(options, code, language) {
   if (language && options.languageWrapper) {
     if (typeof options.languageWrapper === 'function') {
       code = options.languageWrapper(code, language);
-    }
-    else {
+    } else {
       code = options.languageWrapper.replace('{slot}', code);
     }
   }
@@ -123,7 +115,12 @@ function wrapInBlockDiv(type, contents) {
 }
 
 function matchIfBlockLanguage(result, language) {
-  return language.replace(/^if(-not)?: ?/, '').split(',').indexOf(result.originalLanguage) >= 0;
+  return (
+    language
+      .replace(/^if(-not)?: ?/, '')
+      .split(',')
+      .indexOf(result.originalLanguage) >= 0
+  );
 }
 
 /**
@@ -134,12 +131,11 @@ function matchIfBlockLanguage(result, language) {
  * @param language
  */
 function handleExtension(options, code, language) {
-  const ext = options.extensions[language]
+  const ext = options.extensions[language];
 
   if (typeof ext.code === 'function') {
     return ext.code(code, options);
-  }
-  else {
+  } else {
     return ext.code.replace('{code}', code);
   }
 }
@@ -150,17 +146,15 @@ function handleExtension(options, code, language) {
  * @param code
  * @returns {string}
  */
-function renderDefinitions (result, code, render) {
+function renderDefinitions(result, code, render) {
   var html = '<dl>';
   if (code) {
-    code.split('\n').forEach(line => {
+    code.split('\n').forEach((line) => {
       if (line.match(/^#/)) {
         html += render(line);
-      }
-      else if (line.match(/: *$/)) {
+      } else if (line.match(/: *$/)) {
         html += `<dt>${line.replace(/:$/, '')}</dt>`;
-      }
-      else {
+      } else {
         // if line starts with 4 white spaces, a tab or a ` block, then consider it a pre tag and don't render dfn
         html += `<dd>${render(line, !!line.match(/^(\t|\s{4}|`)/))}</dd>`;
       }

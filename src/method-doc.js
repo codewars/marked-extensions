@@ -1,6 +1,5 @@
 import { escapeHtml } from './strings';
 
-
 export function methodDoc(code, language) {
   try {
     let json = JSON.parse(code);
@@ -48,18 +47,17 @@ export function methodDoc(code, language) {
     }
 
     return md.join('\n');
-  }
-  catch (ex) {
+  } catch (ex) {
     return '`Failed to render %jsonblock: ' + ex.message + '`';
   }
 }
 
 function hasExampleNames(json) {
-  return json.examples && json.examples.filter(e => !!e.name).length > 0;
+  return json.examples && json.examples.filter((e) => !!e.name).length > 0;
 }
 function exampleRows(json) {
   const hasExamples = hasExampleNames(json);
-  return json.examples.map(v => exampleRow(json, v, hasExamples)).join('\n');
+  return json.examples.map((v) => exampleRow(json, v, hasExamples)).join('\n');
 }
 
 function exampleRow(json, example, hasExamples) {
@@ -70,7 +68,7 @@ function exampleRow(json, example, hasExamples) {
   }
 
   if (example.args) {
-    md += example.args.map(arg => formatExampleValue(arg)).join('|');
+    md += example.args.map((arg) => formatExampleValue(arg)).join('|');
   }
   md += `|${formatExampleValue(example.returns) || ''}`;
   return md;
@@ -83,13 +81,13 @@ function formatExampleValue(value) {
 function exampleHeader(json) {
   const line1 = [];
   const line2 = [];
-  if (hasExampleNames(json)){
+  if (hasExampleNames(json)) {
     line1.push('|');
     line2.push('');
   }
 
-  Object.keys(getArgs(json)).forEach(key => {
-    line1.push(key)
+  Object.keys(getArgs(json)).forEach((key) => {
+    line1.push(key);
     line2.push('');
   });
   line1.push('Return Value');
@@ -111,13 +109,13 @@ function methodName(json) {
 }
 
 function methodHeader(json) {
-  const args = Object.keys(getArgs(json)).map(key => `\`@@docName:${key}\``);
+  const args = Object.keys(getArgs(json)).map((key) => `\`@@docName:${key}\``);
   return `### \`${methodName(json)}\`(${args.join(', ')})`;
 }
 
 function parameters(json) {
   const args = getArgs(json);
-  const params = Object.keys(args).map(key => {
+  const params = Object.keys(args).map((key) => {
     const arg = args[key];
     const type = typeof arg === 'string' ? arg : arg.type;
     let md = `@@docName:${key}: ${formatDocType(json, type, 'String')}`;
@@ -134,7 +132,7 @@ function parameters(json) {
 function returnType(json) {
   if (json.returns) {
     const type = typeof json.returns === 'string' ? json.returns : json.returns.type;
-    let md = formatDocType (json, type, 'void');
+    let md = formatDocType(json, type, 'void');
     if (json.returns.desc) {
       md += ` - ${json.returns.desc}`;
     }
@@ -148,7 +146,6 @@ function formatDocType(json, type, defaultValue) {
   if (json.formatTypes === false) {
     return `<dfn class="doc-type">${escapeHtml(type)}</dfn>`;
   }
-  else {
-    return `@@docType:${type || defaultValue || 'null'}`
-  }
+
+  return `@@docType:${type || defaultValue || 'null'}`;
 }
