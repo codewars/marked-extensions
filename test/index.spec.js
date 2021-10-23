@@ -1,6 +1,5 @@
 import { process } from '../src/index';
 import marked from 'marked';
-import yaml from 'js-yaml';
 import { expect } from 'chai';
 import { fixture } from './test-utils';
 import { escapeHtml } from '../src/strings';
@@ -19,7 +18,6 @@ describe('process', function () {
           'originalLanguage',
           'extensions',
           'renderer',
-          'preprocessed',
           'html',
           'render',
           'afterRender'
@@ -70,13 +68,6 @@ describe('process', function () {
     it('should not break if language is not found', function () {
       const example = process(marked, fixture('invalid-language'), { language: 'ruby' });
       expect(example.html()).to.include('<code class="language-rub">');
-    });
-  });
-
-  describe('YAML/Meta', function () {
-    const metaExample = process(marked, fixture('meta'), { jsYaml: yaml });
-    it('should extract meta data', function () {
-      expect(metaExample.meta.options.theme).to.equal('test');
     });
   });
 

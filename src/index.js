@@ -37,9 +37,6 @@ export const defaultOptions = {
 
   // true if doc tokens should be parsed
   docTokens: true,
-
-  // if set to an instance of js-yaml, it will process meta data at the top of the markdown.
-  jsYaml: null,
 };
 
 /**
@@ -47,7 +44,7 @@ export const defaultOptions = {
  * @param marked The marked library, must be passed in since it is not included within this library as a dependency
  * @param markdown The markdown to process
  * @param options The extended set of options, as well as marked options. See defaultOptions for more details.
- * @returns {{originalLanguage, language, languages: [], extensions: [], raw: *, preprocessed: *}}
+ * @returns {{originalLanguage, language, languages: [], extensions: [], raw: *}}
  */
 export function process(marked, markdown, options = {}) {
   assignMissing(options, defaultOptions);
@@ -58,12 +55,7 @@ export function process(marked, markdown, options = {}) {
     languages: {},
     extensions: {},
     raw: markdown,
-    preprocessed: markdown,
   };
-
-  if (options.jsYaml) {
-    processMeta(options, result);
-  }
 
   processBlocks(options, result);
   if (options.defaultLanguageToFirst) {
@@ -83,7 +75,7 @@ export function process(marked, markdown, options = {}) {
 }
 
 function render(options, result) {
-  let html = result.render(result.preprocessed);
+  let html = result.render(result.raw);
 
   if (options.docTokens) {
     html = processDocTokens(result, html);
@@ -111,22 +103,6 @@ function afterRenderFn(options, result) {
 }
 
 /**
- * Processes yaml content at the top of the markdown, marked starting by a --- and ending with a ...
- * @param options
- * @param result
- */
-function processMeta(options, result) {
-  result.preprocessed = result.preprocessed.replace(
-    /^---\r?\n(.*\r?\n)*\.{3}\s*(\r?\n){2}?/,
-    (meta) => {
-      let yaml = meta.replace(/^---\r?\n/, '').replace(/\r?\n\.\.\. *\r?\n?/, '');
-      result.meta = options.jsYaml.safeLoad(yaml);
-      return '';
-    }
-  );
-}
-
-/**
  * if no language was provided, or the one provided is not in the list of supported languages,
  * then switch to the first language found
  * @param result
@@ -145,7 +121,7 @@ function processLanguage(result) {
  * @param result
  */
 function processBlocks(options, result) {
-  let blocks = result.preprocessed.match(/^(```|~~~) ?(.*) *$/gm) || [];
+  let blocks = result.raw.match(/^(```|~~~) ?(.*) *$/gm) || [];
   blocks = blocks.map((m) => m.replace(/(```|~~~) ?/g, ''));
 
   // loop through each block and track which are languages and which are extensions
