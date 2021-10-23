@@ -21,10 +21,6 @@ describe('process', function () {
   });
 
   describe('language filtering', function () {
-    it('should filter by first language if non is set', function () {
-      expect(basicExample.html()).to.include('javascript').and.not.to.include('ruby');
-    });
-
     describe('if/not blocks', function () {
       it('should filter language by original langauge', function () {
         const example = process(marked, fixture('if-not'), { language: 'javascript' });

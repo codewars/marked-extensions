@@ -12,9 +12,6 @@ export const defaultOptions = {
   // the language that should be used for filtering out all other languages
   language: null,
 
-  // true if languages should be filtered
-  filterLanguages: true,
-
   // if the language value is not set, or is set to a value not found within the markdown, this
   // setting will default the language to the first one found within the markdown.
   defaultLanguageToFirst: true,

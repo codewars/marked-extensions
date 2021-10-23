@@ -48,16 +48,6 @@ function setupCode(options, result) {
       } else if (language[0] === '%') {
         return wrapInBlockDiv(language, result.render(code));
       }
-
-      // at this point just assume that whatever is left is a language that needs to be formatted
-      const codeLanguage = language.split(':')[0];
-
-      if (codeLanguage) {
-        // if filtering is enabled and this is not the active language then filter it out
-        if (options.filterLanguages && codeLanguage !== result.language && result.language) {
-          return '';
-        }
-      }
     }
 
     return wrapLanguage(options, _code.call(result.renderer, code, language), language);
