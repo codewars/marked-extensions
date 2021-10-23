@@ -39,8 +39,6 @@ function setupCode(options, result) {
         return matchIfBlockLanguage(result, language) ? render(code) : '';
       } else if (language.match(/^if-not:/)) {
         return matchIfBlockLanguage(result, language) ? '' : render(code);
-      } else if (result.extensions.indexOf(language) >= 0) {
-        return handleExtension(options, code, language);
       } else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       } else if (language === '%method-doc') {
@@ -90,23 +88,6 @@ function matchIfBlockLanguage(result, language) {
       .split(',')
       .indexOf(result.originalLanguage) >= 0
   );
-}
-
-/**
- * If the extension value is a function, it will treat it as a render function, otherwise it will
- * assume the extension value is a string and treat it as a template with {code} as the code placeholder.
- * @param options
- * @param code
- * @param language
- */
-function handleExtension(options, code, language) {
-  const ext = options.extensions[language];
-
-  if (typeof ext.code === 'function') {
-    return ext.code(code, options);
-  } else {
-    return ext.code.replace('{code}', code);
-  }
 }
 
 /**

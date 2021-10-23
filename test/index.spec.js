@@ -16,11 +16,9 @@ describe('process', function () {
           'languages',
           'language',
           'originalLanguage',
-          'extensions',
           'renderer',
           'html',
-          'render',
-          'afterRender'
+          'render'
         );
     });
 
@@ -124,24 +122,6 @@ describe('process', function () {
     it('should handle doc types without ``', function () {
       let example = process(marked, '@@docType:Array<String>', { language: 'javascript' });
       expect(example.html()).to.include(escapeHtml('Array<String>')).to.not.include('of /codes');
-    });
-  });
-
-  describe('extensions', function () {
-    const extensions = {
-      mermaid: {
-        code: (code) => `<div class="mermaid">${code}</div>`,
-      },
-    };
-
-    it('should add html wrapper', function () {
-      let example = process(marked, fixture('extensions'), { extensions });
-      expect(example.html()).to.include('<div class="mermaid">');
-    });
-
-    it('should detect as an extension', function () {
-      let example = process(marked, fixture('extensions'), { extensions });
-      expect(example.extensions[0]).to.equal('mermaid');
     });
   });
 
