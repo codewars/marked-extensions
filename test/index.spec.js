@@ -20,7 +20,6 @@ describe('process', function () {
           'originalLanguage',
           'extensions',
           'renderer',
-          'tabs',
           'headers',
           'preprocessed',
           'html',

@@ -50,7 +50,7 @@ export const defaultOptions = {
  * @param marked The marked library, must be passed in since it is not included within this library as a dependency
  * @param markdown The markdown to process
  * @param options The extended set of options, as well as marked options. See defaultOptions for more details.
- * @returns {{originalLanguage, language, languages: [], extensions: [], tabs: {}, headers: {h1: Array, h2: Array, h3: Array, h4: Array}, icons: [], raw: *, preprocessed: *}}
+ * @returns {{originalLanguage, language, languages: [], extensions: [], headers: {h1: Array, h2: Array, h3: Array, h4: Array}, icons: [], raw: *, preprocessed: *}}
  */
 export function process(marked, markdown, options = {}) {
   assignMissing(options, defaultOptions);
@@ -60,7 +60,6 @@ export function process(marked, markdown, options = {}) {
     language: options.language,
     languages: {},
     extensions: {},
-    tabs: {},
     headers: { h1: [], h2: [], h3: [], h4: [] },
     icons: {},
     raw: markdown,
