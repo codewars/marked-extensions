@@ -11,15 +11,7 @@ describe('process', function () {
     it('should return a valid object', function () {
       expect(basicExample)
         .to.be.an('object')
-        .and.to.have.all.keys(
-          'raw',
-          'languages',
-          'language',
-          'originalLanguage',
-          'renderer',
-          'html',
-          'render'
-        );
+        .and.to.have.all.keys('raw', 'language', 'originalLanguage', 'renderer', 'html', 'render');
     });
 
     it('should escape scripts in backticks', function () {

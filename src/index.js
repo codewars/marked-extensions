@@ -28,7 +28,7 @@ export const defaultOptions = {
  * @param marked The marked library, must be passed in since it is not included within this library as a dependency
  * @param markdown The markdown to process
  * @param options The extended set of options, as well as marked options. See defaultOptions for more details.
- * @returns {{originalLanguage, language, languages: [], raw: *}}
+ * @returns {{originalLanguage, language, raw: *}}
  */
 export function process(marked, markdown, options = {}) {
   assignMissing(options, defaultOptions);
@@ -36,11 +36,9 @@ export function process(marked, markdown, options = {}) {
   const result = {
     originalLanguage: options.language,
     language: options.language,
-    languages: {},
     raw: markdown,
   };
 
-  processBlocks(options, result);
   if (options.defaultLanguageToFirst) {
     processLanguage(result);
   }
@@ -49,10 +47,6 @@ export function process(marked, markdown, options = {}) {
 
   var html = null;
   result.html = () => html || (html = render(options, result));
-
-  // convert objects which have been acting as basic sets to an array
-  result.languages = Object.keys(result.languages);
-
   return result;
 }
 
@@ -72,21 +66,21 @@ function render(options, result) {
  * @param result
  */
 function processLanguage(result) {
-  if (!result.language || !result.languages[result.language]) {
-    result.language = Object.keys(result.languages)[0];
+  const languages = collectLanguages(result.raw);
+  if (!result.language || !languages[result.language]) {
+    result.language = Object.keys(languages)[0];
   }
 }
 
 /**
- * Loops through all ``` style blocks and figures out which are languages
- * @param markdown
- * @param options
- * @param result
+ * Loops through all ``` style blocks collect languages.
+ * @param raw
  */
-function processBlocks(options, result) {
-  let blocks = result.raw.match(/^(```|~~~) ?(.*) *$/gm) || [];
+function collectLanguages(raw) {
+  let blocks = raw.match(/^(```|~~~) ?(.*) *$/gm) || [];
   blocks = blocks.map((m) => m.replace(/(```|~~~) ?/g, ''));
 
+  const languages = {};
   // loop through each block and track languages
   blocks.forEach((text) => {
     if (text) {
@@ -95,9 +89,10 @@ function processBlocks(options, result) {
       text.split(',').forEach((name) => {
         // TODO Treat anything not defined in this extension as language
         if (name.indexOf('%') === -1) {
-          result.languages[name] = true;
+          languages[name] = true;
         }
       });
     }
   });
+  return languages;
 }
