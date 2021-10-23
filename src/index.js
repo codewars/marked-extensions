@@ -37,7 +37,11 @@ export function process(marked, markdown, options = {}) {
   };
 
   if (options.defaultLanguageToFirst) {
-    processLanguage(result);
+    // TODO No need to collect languages, return the first found.
+    const languages = collectLanguages(result.raw);
+    if (!result.language || !languages[result.language]) {
+      result.language = Object.keys(languages)[0];
+    }
   }
 
   buildRenderer(marked, options, result);
@@ -55,18 +59,6 @@ function render(options, result) {
   }
 
   return html;
-}
-
-/**
- * if no language was provided, or the one provided is not in the list of supported languages,
- * then switch to the first language found
- * @param result
- */
-function processLanguage(result) {
-  const languages = collectLanguages(result.raw);
-  if (!result.language || !languages[result.language]) {
-    result.language = Object.keys(languages)[0];
-  }
 }
 
 /**
