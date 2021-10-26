@@ -1,31 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8"/>
-  <title>Marked Extensions Demo</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.min.css">
-  <style>
-    body {
-      padding: 0.5em;
-    }
-    .CodeMirror {
-      border: 1px solid #222;
-      font-size: 13px;
-      min-height: 50vh;
-    }
-    .container {
-      display: grid;
-      grid-template-columns: 50% 50%;
-      grid-gap: 0 1em;
-    }
-  </style>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <title>Marked Extensions Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.min.css"
+    />
+    <style>
+      body {
+        padding: 0.5em;
+      }
+      .CodeMirror {
+        border: 1px solid #222;
+        font-size: 13px;
+        min-height: 50vh;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-gap: 0 1em;
+      }
+    </style>
+  </head>
 
-<body>
-  <h1>Marked Extensions</h1>
-  <div class="container">
-    <div>
-      <textarea id="input">
+  <body>
+    <h1>Marked Extensions</h1>
+    <div class="container">
+      <div>
+        <textarea id="input">
 # @@docMethod:full_name(@@docParam:first_name, @@docParam:last_name)
 
 ```@doc
@@ -35,14 +38,15 @@ Parameters:
 
 Return Value:
 @@docType:String - The first and last name
-```</textarea>
+```</textarea
+        >
+      </div>
+      <div id="output"></div>
     </div>
-    <div id="output"></div>
-  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/mode/markdown/markdown.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.1/marked.min.js"></script>
-  <script src="./demo.js"></script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/mode/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.1.1/marked.min.js"></script>
+    <script type="module" src="./demo.js"></script>
+  </body>
 </html>

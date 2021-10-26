@@ -1,7 +1,7 @@
 import { process } from '../src/index';
-import marked from 'marked'
-import { expect } from 'chai'
-import { fixture } from './test-utils'
+import marked from 'marked';
+import { expect } from 'chai';
+import { fixture } from './test-utils';
 
 describe('%table-doc', () => {
   it('should render a table in HTML format', () => {

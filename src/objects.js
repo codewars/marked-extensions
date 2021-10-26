@@ -5,11 +5,11 @@
  * @param source
  * @returns {*}
  */
-export function assignMissing (target, source) {
-  Object.keys(source || {}).forEach(key => {
+export function assignMissing(target, source) {
+  Object.keys(source || {}).forEach((key) => {
     if (!(key in target)) {
       target[key] = source[key];
     }
-  })
+  });
   return target;
 }

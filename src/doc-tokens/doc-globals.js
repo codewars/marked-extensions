@@ -1,4 +1,4 @@
-export function replaceDocGlobals (language, pre, content) {
+export function replaceDocGlobals(language, pre, content) {
   return content.replace(/@@docGlobal: ?.*`?/g, function (value) {
     switch (language) {
       // languages which should keep the global class
@@ -12,9 +12,9 @@ export function replaceDocGlobals (language, pre, content) {
       default:
         return wrap(value.replace(/@@docGlobal: ?[a-zA-Z\d]*\./, ''), pre);
     }
-  })
+  });
 }
 
-function wrap (value, pre) {
+function wrap(value, pre) {
   return pre ? value : `<dfn class="doc-class">${value}</dfn>`;
 }

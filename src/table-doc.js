@@ -13,7 +13,7 @@ export function tableDoc(code) {
 
     html.push('<table>');
     html.push('<thead><tr><th>Column</th><th>Type</th></tr></thead>');
-    if (json.columns){
+    if (json.columns) {
       html.push('<tbody>');
       html.push(tableHeaders(json.columns));
       html.push('</tbody>');
@@ -21,13 +21,12 @@ export function tableDoc(code) {
 
     html.push('</table>');
     return html.join('\n');
-  }
-  catch (ex) {
+  } catch (ex) {
     return '`failed to render %jsonblock: `' + ex.message + '`';
   }
 }
 
-const tableHeaders = json =>
+const tableHeaders = (json) =>
   Object.keys(json)
-  .map(k => `<tr><td>${k}</td><td>${json[k]}</td></tr>`)
-  .join('\n');
+    .map((k) => `<tr><td>${k}</td><td>${json[k]}</td></tr>`)
+    .join('\n');
