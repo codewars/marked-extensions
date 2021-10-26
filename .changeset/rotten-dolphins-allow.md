@@ -1,5 +1,5 @@
 ---
-'@codewars/marked-extensions': minor
+'@codewars/marked-extensions': major
 ---
 
 Remove heading extensions
