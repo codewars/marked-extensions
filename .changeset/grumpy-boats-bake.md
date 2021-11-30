@@ -2,4 +2,4 @@
 '@codewars/marked-extensions': minor
 ---
 
-Remove heading extensions
+Upgrade `marked` to 4.0.5
