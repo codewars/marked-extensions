@@ -4,7 +4,6 @@ export function replaceDocGlobals(language, pre, content) {
       // languages which should keep the global class
       case 'java':
       case 'csharp':
-      case 'kotlin':
       case 'scala':
         return wrap(value.replace(/@@docGlobal: ?/, ''), pre);
 
