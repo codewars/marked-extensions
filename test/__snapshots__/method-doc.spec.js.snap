@@ -1,0 +1,461 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`%method-doc should match snapshot 1`] = `
+<h1 id="documentation">
+  Documentation
+</h1>
+<p>
+  This is some text
+</p>
+<div class="block block--docs method-doc">
+  <h3>
+    <code>
+      <dfn class="doc-name doc-name--method">
+        open_files
+      </dfn>
+    </code>
+    (
+    <code>
+      <dfn class="doc-name doc-name--name">
+        files
+      </dfn>
+    </code>
+    ,
+    <code>
+      <dfn class="doc-name doc-name--name">
+        ext
+      </dfn>
+    </code>
+    )
+  </h3>
+  <p>
+    Loops through any files that are not opened and opens them
+  </p>
+  <div class="block block--doc">
+    <dl>
+      <dt>
+        Parameters
+      </dt>
+      <dd>
+        <p>
+          <dfn class="doc-name doc-name--name">
+            files
+          </dfn>
+          :
+          <dfn class="doc-type">
+            Array&lt;File&gt;
+          </dfn>
+          - An array of file objects that may need to be opened
+        </p>
+      </dd>
+      <dd>
+        <p>
+          <dfn class="doc-name doc-name--name">
+            ext
+          </dfn>
+          :
+          <dfn class="doc-type">
+            String
+          </dfn>
+          - An optional extension that may be used as a filter to determine which files to open
+        </p>
+      </dd>
+      <dt>
+        Return Value
+      </dt>
+      <dd>
+        <p>
+          <dfn class="doc-type">
+            Array&lt;File&gt;
+          </dfn>
+          - A filtered array of files that were opened
+        </p>
+      </dd>
+      <dt>
+        Constraints
+      </dt>
+      <dd>
+        <p>
+          0 &lt;= files.length &lt;= 10
+        </p>
+      </dd>
+    </dl>
+  </div>
+  <div class="block block--doc-block">
+    <h4>
+      Examples
+    </h4>
+    <table>
+      <thead>
+        <tr>
+          <th>
+          </th>
+          <th>
+            files
+          </th>
+          <th>
+            ext
+          </th>
+          <th>
+            Return Value
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <em>
+              Example A
+            </em>
+          </td>
+          <td>
+            <code>
+              [1,2,3]
+            </code>
+          </td>
+          <td>
+            <code>
+              "js"
+            </code>
+          </td>
+          <td>
+            <code>
+              [1,2]
+            </code>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <em>
+              Example
+            </em>
+          </td>
+          <td>
+            <code>
+              [1,2,3]
+            </code>
+          </td>
+          <td>
+            <code>
+              "rb"
+            </code>
+          </td>
+          <td>
+            <code>
+              [3]
+            </code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`%method-doc should match snapshot with language: csharp 1`] = `
+<h1 id="documentation">
+  Documentation
+</h1>
+<p>
+  This is some text
+</p>
+<div class="block block--docs method-doc">
+  <h3>
+    <code>
+      <dfn class="doc-class">
+        Challenge
+      </dfn>
+      .
+      <dfn class="doc-name doc-name--method">
+        OpenFiles
+      </dfn>
+    </code>
+    (
+    <code>
+      <dfn class="doc-name doc-name--name">
+        files
+      </dfn>
+    </code>
+    ,
+    <code>
+      <dfn class="doc-name doc-name--name">
+        ext
+      </dfn>
+    </code>
+    )
+  </h3>
+  <p>
+    Loops through any files that are not opened and opens them
+  </p>
+  <div class="block block--doc">
+    <dl>
+      <dt>
+        Parameters
+      </dt>
+      <dd>
+        <p>
+          <dfn class="doc-name doc-name--name">
+            files
+          </dfn>
+          :
+          <dfn class="doc-type">
+            File[]
+          </dfn>
+          - An array of file objects that may need to be opened
+        </p>
+      </dd>
+      <dd>
+        <p>
+          <dfn class="doc-name doc-name--name">
+            ext
+          </dfn>
+          :
+          <dfn class="doc-type">
+            string
+          </dfn>
+          - An optional extension that may be used as a filter to determine which files to open
+        </p>
+      </dd>
+      <dt>
+        Return Value
+      </dt>
+      <dd>
+        <p>
+          <dfn class="doc-type">
+            File[]
+          </dfn>
+          - A filtered array of files that were opened
+        </p>
+      </dd>
+      <dt>
+        Constraints
+      </dt>
+      <dd>
+        <p>
+          0 &lt;= files.length &lt;= 10
+        </p>
+      </dd>
+    </dl>
+  </div>
+  <div class="block block--doc-block">
+    <h4>
+      Examples
+    </h4>
+    <table>
+      <thead>
+        <tr>
+          <th>
+          </th>
+          <th>
+            files
+          </th>
+          <th>
+            ext
+          </th>
+          <th>
+            Return Value
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <em>
+              Example A
+            </em>
+          </td>
+          <td>
+            <code>
+              [1,2,3]
+            </code>
+          </td>
+          <td>
+            <code>
+              "js"
+            </code>
+          </td>
+          <td>
+            <code>
+              [1,2]
+            </code>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <em>
+              Example
+            </em>
+          </td>
+          <td>
+            <code>
+              [1,2,3]
+            </code>
+          </td>
+          <td>
+            <code>
+              "rb"
+            </code>
+          </td>
+          <td>
+            <code>
+              [3]
+            </code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`%method-doc should match snapshot with language: javascript 1`] = `
+<h1 id="documentation">
+  Documentation
+</h1>
+<p>
+  This is some text
+</p>
+<div class="block block--docs method-doc">
+  <h3>
+    <code>
+      <dfn class="doc-name doc-name--method">
+        openFiles
+      </dfn>
+    </code>
+    (
+    <code>
+      <dfn class="doc-name doc-name--name">
+        files
+      </dfn>
+    </code>
+    ,
+    <code>
+      <dfn class="doc-name doc-name--name">
+        ext
+      </dfn>
+    </code>
+    )
+  </h3>
+  <p>
+    Loops through any files that are not opened and opens them
+  </p>
+  <div class="block block--doc">
+    <dl>
+      <dt>
+        Parameters
+      </dt>
+      <dd>
+        <p>
+          <dfn class="doc-name doc-name--name">
+            files
+          </dfn>
+          :
+          <dfn class="doc-type">
+            Array&lt;File&gt;
+          </dfn>
+          - An array of file objects that may need to be opened
+        </p>
+      </dd>
+      <dd>
+        <p>
+          <dfn class="doc-name doc-name--name">
+            ext
+          </dfn>
+          :
+          <dfn class="doc-type">
+            String
+          </dfn>
+          - An optional extension that may be used as a filter to determine which files to open
+        </p>
+      </dd>
+      <dt>
+        Return Value
+      </dt>
+      <dd>
+        <p>
+          <dfn class="doc-type">
+            Array&lt;File&gt;
+          </dfn>
+          - A filtered array of files that were opened
+        </p>
+      </dd>
+      <dt>
+        Constraints
+      </dt>
+      <dd>
+        <p>
+          0 &lt;= files.length &lt;= 10
+        </p>
+      </dd>
+    </dl>
+  </div>
+  <div class="block block--doc-block">
+    <h4>
+      Examples
+    </h4>
+    <table>
+      <thead>
+        <tr>
+          <th>
+          </th>
+          <th>
+            files
+          </th>
+          <th>
+            ext
+          </th>
+          <th>
+            Return Value
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <em>
+              Example A
+            </em>
+          </td>
+          <td>
+            <code>
+              [1,2,3]
+            </code>
+          </td>
+          <td>
+            <code>
+              "js"
+            </code>
+          </td>
+          <td>
+            <code>
+              [1,2]
+            </code>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <em>
+              Example
+            </em>
+          </td>
+          <td>
+            <code>
+              [1,2,3]
+            </code>
+          </td>
+          <td>
+            <code>
+              "rb"
+            </code>
+          </td>
+          <td>
+            <code>
+              [3]
+            </code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
