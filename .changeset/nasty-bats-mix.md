@@ -1,5 +1,5 @@
 ---
-"@codewars/marked-extensions": major
+'@codewars/marked-extensions': minor
 ---
 
 Automate release
