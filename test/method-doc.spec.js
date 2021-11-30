@@ -8,7 +8,8 @@ describe('%method-doc', () => {
     const example = process(marked, fixture('method-doc')).html();
     expect(example).to.include('>Examples</h4>');
     expect(example).to.include('<th>files</th>');
-    expect(example).to.include('<code><dfn class="doc-class">');
+    // Used to have empty `<dfn class="doc-class"></dfn>` after global prefix was removed
+    // expect(example).to.include('<code><dfn class="doc-class">');
     expect(example).to.include('- A filtered array of files that were opened</p>');
     expect(example).to.include('<td><code>[1,2,3]</code></td>');
     expect(example).to.include('<td><code>"js"</code></td>');

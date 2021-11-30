@@ -130,6 +130,17 @@ export function replaceDocTypes(language, pre, content) {
   });
 }
 
+export function docType(value, language) {
+  const nullable = !!value.match(/\?$/);
+  value = value.replace('?', '').trim();
+  value = unescapeHtml(value);
+  value = maybeMapGeneric(language, value);
+  if (nullable) {
+    value = mapNullable(language, value);
+  }
+  return `<dfn class="doc-type">${escapeHtml(value)}</dfn>`;
+}
+
 function mapNullable(language, value) {
   if (NULLABLE[language]) {
     const config = NULLABLE[language][value] || NULLABLE[language].default;

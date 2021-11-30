@@ -71,6 +71,34 @@ export function replaceDocNames(language, pre, content) {
   );
 }
 
+export const docName = (value, language, type = 'Name') => {
+  const v = (() => {
+    switch (findStyle(type, language)) {
+      case 'upper':
+        return value.toUpperCase();
+
+      case 'kabob':
+        return value.replace(/_/g, '-');
+
+      case 'camel':
+        return camelCase(value);
+
+      case 'dollarCamel':
+        return '$' + camelCase(value);
+
+      case 'upperCamel':
+        return camelCase(value, true);
+
+      default:
+        return value;
+    }
+  })();
+  return `<dfn class="doc-name doc-name--${type.toLowerCase()}">${v}</dfn>`;
+};
+
+export const docClass = (value, language) => docName(value, language, 'Class');
+export const docMethod = (value, language) => docName(value, language, 'Method');
+
 function findStyle(type, language) {
   let style = Object.keys(STYLES[type] || []).find((style) => {
     let _style = STYLES[type][style];
