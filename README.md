@@ -3,12 +3,7 @@
 Provides markdown extensions on top of the marked library, including:
 
 - if/if-not markdown blocks
-- hide code language blocks based on active language
 - special doc syntax for writing documentation for multiple languages at once
-- Code line numbers
-- CodeMirror runMode integration
-- Mermaid integration
-- YAML meta data
 
 ## Install
 
