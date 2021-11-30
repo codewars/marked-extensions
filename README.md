@@ -11,15 +11,16 @@ Provides markdown extensions on top of the marked library, including:
 - YAML meta data
 
 ## Install
+
 ```
 npm install marked-extensions --save
 ```
 
 ## Usage
 
-~~~javascript
+````javascript
 var { process } = require('marked-extensions');
-var marked = require('marked');
+var { marked } = require('marked');
 
 var markdown = `
 # @@docMethod:full_name(@@docParam:first_name, @@docParam:last_name)
@@ -33,11 +34,12 @@ Return Value:
 ```
 `
 
-var processed = process(marked, markdown, { language: 'javascript' });  
-~~~
+var processed = process(marked, markdown, { language: 'javascript' });
+````
 
 ### `%method-doc`
-~~~
+
+````
 ```%method-doc
 {
     "method": "",
@@ -63,4 +65,4 @@ var processed = process(marked, markdown, { language: 'javascript' });
     }
 }
 ```
-~~~
+````

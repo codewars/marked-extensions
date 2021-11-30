@@ -1,5 +1,5 @@
 import { process } from '../src/index';
-import marked from 'marked';
+import { marked } from 'marked';
 import { expect } from 'chai';
 import { fixture } from './test-utils';
 
