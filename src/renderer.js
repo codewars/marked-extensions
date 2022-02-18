@@ -42,7 +42,7 @@ function setupCode(options, result) {
       } else if (language === '%definitions' || language === '%doc') {
         return wrapInBlockDiv(language, renderDefinitions(result, code, render));
       } else if (language === '%method-doc') {
-        return wrapInBlockDiv('docs method-doc', render(methodDoc(code, result.originalLanguage)));
+        return wrapInBlockDiv('docs method-doc', methodDoc(code, result.originalLanguage, render));
       } else if (language === '%table-doc') {
         return wrapInBlockDiv('docs table-doc', tableDoc(code));
       } else if (language[0] === '%') {

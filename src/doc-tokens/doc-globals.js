@@ -14,6 +14,20 @@ export function replaceDocGlobals(language, pre, content) {
   });
 }
 
+export const docGlobal = (value, language) => {
+  switch (language) {
+    // languages which should keep the global class
+    case 'java':
+    case 'csharp':
+    case 'scala':
+      return `<dfn class="doc-class">${value}</dfn>`;
+
+    // all other languages remove the global class
+    default:
+      return '';
+  }
+};
+
 function wrap(value, pre) {
   return pre ? value : `<dfn class="doc-class">${value}</dfn>`;
 }
